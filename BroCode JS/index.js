@@ -29,11 +29,44 @@ let userAge;
 
 document.getElementById("myLabel").innerHTML = "Enter Age lah!";
 
-document.getElementById("myButton").onclick = function(){
+document.getElementById("myButton1").onclick = function(){
 
     userAge = document.getElementById("myText").value;
     userAge = Number(userAge);
-    console.log(userAge+1, typeof userAge);
+    console.log(userAge, typeof userAge);
     userAge += 10;
     document.getElementById("myLabel").innerHTML = "You're " + userAge;
 }
+
+
+document.getElementById("myButton2").onclick = function(){
+
+    if(document.getElementById("myCheckBox").checked){
+        console.log("You're Subscribed!");
+    }
+    else{
+        console.log("not subscribed!!!!!!!");
+    }
+}
+
+const visaBtn = document.getElementById("visaBtn");
+const mastercardBtn = document.getElementById("mastercardBtn");
+const bkashBtn = document.getElementById("bkashBtn");
+const myBtn3 = document.getElementById("myButton3")
+
+myBtn3.onclick = function(){
+    
+        if(visaBtn.checked){
+        console.log("You selected VISA");
+    }
+    else if(mastercardBtn.checked){
+        console.log("You selected Mastercard");
+    }
+    else if(bkashBtn.checked){
+        console.log("You chose bKash!");
+    }
+    else{
+        console.log("You must select a type!");
+    }
+}
+
