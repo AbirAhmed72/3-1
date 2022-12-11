@@ -1,6 +1,6 @@
-console.log("I like pizza!!");
-window.alert("JS parbo IN SHA ALLAH!! Allah help me..");
-console.log("It's really hard matee :(");
+// console.log("I like pizza!!");
+// window.alert("JS parbo IN SHA ALLAH!! Allah help me..");
+// console.log("It's really hard matee :(");
 
 let myName = "Abir";
 let myAge = 22;
@@ -56,7 +56,7 @@ const myBtn3 = document.getElementById("myButton3")
 
 myBtn3.onclick = function(){
     
-        if(visaBtn.checked){
+    if(visaBtn.checked){
         console.log("You selected VISA");
     }
     else if(mastercardBtn.checked){
@@ -67,6 +67,26 @@ myBtn3.onclick = function(){
     }
     else{
         console.log("You must select a type!");
+    }
+}
+
+// number guessing game!
+let numOfGuesses = 0;
+const answer = Math.floor((Math.random() * 10) + 1);
+
+document.getElementById("guessSubmitButton").onclick = function(){
+    let myGuess = document.getElementById("myGuessField").value;
+
+    numOfGuesses++;
+
+    if(myGuess == answer){
+        alert(`${myGuess} is the correct number. ${numOfGuesses} guesses taken!`);
+    }
+    else if(myGuess < answer){
+        alert(`${myGuess} is shorter than answer`)
+    }
+    else{
+        alert(`${myGuess} is larger than answer`)
     }
 }
 
