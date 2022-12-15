@@ -90,3 +90,30 @@ document.getElementById("guessSubmitButton").onclick = function(){
     }
 }
 
+// JS Async: callbacks
+
+function sum(x, y, myCallback){
+    myCallback(x+y);
+}
+
+function displayDOM(yo){
+    alert(yo);
+}
+
+function displayConsole(dsp){
+    console.log(dsp);
+}
+
+// sum(4, 19, displayDOM);
+// sum(4, 19, displayConsole);
+
+let nums = [1, 2, 3, 4, 5];
+let numsCubed = nums.map(doCube);
+
+function doCube(elements){
+    return Math.pow(elements, 3);
+}
+
+// numsCubed.forEach(displayDOM);
+// displayConsole(numsCubed);
+// displayDOM(numsCubed);
