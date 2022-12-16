@@ -70,7 +70,7 @@ myBtn3.onclick = function(){
     }
 }
 
-// number guessing game!
+// ========number guessing game===========
 let numOfGuesses = 0;
 const answer = Math.floor((Math.random() * 10) + 1);
 
@@ -90,7 +90,7 @@ document.getElementById("guessSubmitButton").onclick = function(){
     }
 }
 
-// JS Async: callbacks
+// -------JS Async: callbacks------
 
 function sum(x, y, myCallback){
     myCallback(x+y);
@@ -117,3 +117,41 @@ function doCube(elements){
 // numsCubed.forEach(displayDOM);
 // displayConsole(numsCubed);
 // displayDOM(numsCubed);
+
+//-------ascending the grades using arrow functions=======
+
+//normal way
+
+let stuGrade = [100, 59, 21, 51, 79, 61, 92, 5, 38];
+
+function printGrades(elements){
+    alert(elements);
+}
+
+function ascendingGrades(x, y){
+    return x-y;
+}
+
+stuGrade.sort(ascendingGrades);
+// stuGrade.forEach(printGrades);
+printGrades(stuGrade);
+
+
+
+//function expression
+
+stuGrade.sort(function (x, y){
+    return y-x;
+});
+
+stuGrade.forEach(function (elements){
+    alert(elements);
+});
+
+printGrades(stuGrade);
+
+
+//function arrows    blabla.func((takes) => gives)
+
+stuGrade.sort((x, y) => x-y);
+stuGrade.forEach((elements) => alert(`${elements} is sorted`));
