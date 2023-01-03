@@ -1,20 +1,16 @@
 public class TonerSaveMode extends PrintMode{
-    public TonerSaveMode(int pgNumber, int pgSize, char pgOrientation, int colorIntensity, int costPerPage) {
-        super(pgNumber, pgSize, pgOrientation, colorIntensity, costPerPage);
-    }
+    
+    public String tonerSavingLevel;
 
     @Override
-    public void saveToner() {
-
+    public void applyModes() {
+        if(tonerSavingLevel == "High"){
+            setColorIntensity(1);
+        }
+        else if (tonerSavingLevel == "Medium"){
+            setColorIntensity(5);
+        }
+        else setColorIntensity(10);
     }
 
-    @Override
-    public void savePage() {
-
-    }
-
-    @Override
-    public void boost() {
-
-    }
 }

@@ -1,20 +1,23 @@
 public class PageSaveMode extends PrintMode{
-    public PageSaveMode(int pgNumber, int pgSize, char pgOrientation, int colorIntensity, int costPerPage) {
-        super(pgNumber, pgSize, pgOrientation, colorIntensity, costPerPage);
+    
+    private void adjustPageSize(){
+        //algorithm to adjust page size only
     }
 
+    private void adjustPageOrientation(){
+        //algorithm to adjust page orientation only
+    }
+
+    private void reduceNumberOfPages(){
+        //algorithm to reduce number of pages only
+    }
+    
     @Override
-    public void saveToner() {
-
+    public void applyModes(){
+        adjustPageSize();
+        adjustPageOrientation();
+        reduceNumberOfPages();
     }
-
-    @Override
-    public void savePage() {
-
-    }
-
-    @Override
-    public void boost() {
-
-    }
+    
+    
 }
