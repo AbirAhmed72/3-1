@@ -1,0 +1,98 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+/* body{
+    background-image: url("vecteezy_abstract-blue-background-simple-design-for-your-website_6852804.jpg");
+    color: white;
+} */
+nav {
+    border: 1px red solid;
+
+    display: flex;
+    justify-content: space-between;
+}
+nav a {
+    border: 1px red solid;
+
+    flex: 0 0 25%;
+    text-align: center;
+    padding: 2em 0;
+    color: white;
+    font-weight: bold;
+    font-size: large;
+}
+nav a:active {
+    color: red;
+    text-decoration: line-through;
+    
+}
+nav a:hover {
+    color: whitesmoke;
+    text-decoration: none;
+    background-color: darkcyan;
+}
+
+.details{
+    border: 1px red solid;
+
+    float: left;
+    width: 60%;
+    /* margin-left: 8%;
+    margin-top: 15%; */
+}
+.details h1{
+    border: 1px red solid;
+    font-size: 70px;
+    color: black;
+    margin-bottom: 30px;
+    margin-left: 18%;
+    margin-top: 25%;
+}
+.details h1 span{
+    border: 1px red solid;
+
+    color: darkcyan;
+    font-weight: bold;
+}
+.details p{
+    border: 1px red solid;
+
+    line-height: 30px;
+    font-size: large;
+    color: #555;
+    margin-left: 18%;
+    /* margin-top: 15%; */
+} 
+.details p a {
+    border: 1px red solid;
+  
+    text-decoration: none;
+    margin: 30px 0;
+    font-weight: bold;
+    color: white;
+    background-color: #008b8b;
+    padding: 10px 15px;
+    border-radius: 5px;
+    
+}
+.details p a:hover{
+    color: darkcyan;
+    background-color: black;
+    text-decoration: none;
+}
+.image{
+    border: 1px red solid;
+    float: left;
+    width: 40%;
+    /*  */
+    /*  */
+    /* right: 100px;
+    bottom: 0; */
+    /* align-items: center; */
+}
+.img-responsive{
+    display: flex;
+}
