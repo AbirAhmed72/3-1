@@ -13,16 +13,18 @@ nav {
 
     display: flex;
     justify-content: space-between;
+    
 }
 nav a {
     border: 1px red solid;
 
     flex: 0 0 25%;
     text-align: center;
-    padding: 2em 0;
+    padding: 4rem 0;
     color: white;
     font-weight: bold;
-    font-size: large;
+    font-size: 1.8rem;
+    
 }
 nav a:active {
     color: red;
@@ -33,6 +35,12 @@ nav a:hover {
     color: whitesmoke;
     text-decoration: none;
     background-color: darkcyan;
+    transition: 200ms ease-in-out;
+}
+.container-fluid{
+    border: 1px red solid;
+    margin-top: 17rem;
+
 }
 
 .details{
@@ -45,9 +53,12 @@ nav a:hover {
 }
 .details h1{
     border: 1px red solid;
-    font-size: 70px;
+    font-size: 7rem;
     color: black;
-    margin-bottom: 30px;
+    /* background: linear-gradient(to right, darkcyan, cyan);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 30px; */
     margin-left: 18%;
     margin-top: 25%;
 }
@@ -60,7 +71,7 @@ nav a:hover {
 .details p{
     border: 1px red solid;
 
-    line-height: 30px;
+    line-height: 2rem;
     font-size: large;
     color: #555;
     margin-left: 18%;
@@ -70,12 +81,12 @@ nav a:hover {
     border: 1px red solid;
   
     text-decoration: none;
-    margin: 30px 0;
+    margin: 2rem 0;
     font-weight: bold;
     color: white;
     background-color: #008b8b;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: .75rem 1rem;
+    border-radius: .4rem;
     
 }
 .details p a:hover{
@@ -87,12 +98,51 @@ nav a:hover {
     border: 1px red solid;
     float: left;
     width: 40%;
-    /*  */
-    /*  */
-    /* right: 100px;
-    bottom: 0; */
-    /* align-items: center; */
 }
 .img-responsive{
     display: flex;
+}
+
+.Education{
+    border: 1px red solid;
+    margin-top: 10rem;
+    padding: 2rem 5rem 2rem 5rem;
+
+}
+.Education h1{
+    font-weight: bold;
+    font-size: 3rem;
+    margin-bottom: 8rem;
+}
+
+th{
+    border: 1px red solid;
+
+    font-size: 3rem;
+}
+
+td{
+    border: 1px red solid;
+    font-size: 2rem;
+}
+
+.Hobbies{
+    border: 1px red solid;
+    margin-top: 10rem;
+    padding: 2rem 5rem 2rem 5rem;
+}
+.Hobbies h1{
+    border: 1px red solid;
+
+    font-weight: bold;
+    font-size: 3rem;
+    margin-bottom: 8rem;
+    text-align: center;
+}
+.Hobbies ul{
+    border: 1px red solid;
+
+    padding-left: 35rem;
+    font-size: 2rem;
+    margin-bottom: 8rem;
 }
