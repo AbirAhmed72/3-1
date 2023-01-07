@@ -4,19 +4,15 @@
     font-family: sans-serif;
 }
 
-/* body{
-    background-image: url("vecteezy_abstract-blue-background-simple-design-for-your-website_6852804.jpg");
-    color: white;
-} */
 nav {
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
     display: flex;
     justify-content: space-between;
     
 }
 nav a {
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
     flex: 0 0 25%;
     text-align: center;
@@ -32,19 +28,19 @@ nav a:active {
     
 }
 nav a:hover {
-    color: whitesmoke;
+    color: white;
     text-decoration: none;
     background-color: darkcyan;
     transition: 200ms ease-in-out;
 }
 .container-fluid{
-    border: 1px red solid;
+    /* border: 1px red solid; */
     margin-top: 17rem;
 
 }
 
 .details{
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
     float: left;
     width: 60%;
@@ -52,7 +48,7 @@ nav a:hover {
     margin-top: 15%; */
 }
 .details h1{
-    border: 1px red solid;
+    /* border: 1px red solid; */
     font-size: 7rem;
     color: black;
     /* background: linear-gradient(to right, darkcyan, cyan);
@@ -63,22 +59,21 @@ nav a:hover {
     margin-top: 25%;
 }
 .details h1 span{
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
     color: darkcyan;
     font-weight: bold;
 }
 .details p{
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
-    line-height: 2rem;
-    font-size: large;
-    color: #555;
+    line-height: 2.5rem;
+    font-size: 2rem;
     margin-left: 18%;
     /* margin-top: 15%; */
 } 
 .details p a {
-    border: 1px red solid;
+    /* border: 1px red solid; */
   
     text-decoration: none;
     margin: 2rem 0;
@@ -95,7 +90,7 @@ nav a:hover {
     text-decoration: none;
 }
 .image{
-    border: 1px red solid;
+    /* border: 1px red solid; */
     float: left;
     width: 40%;
 }
@@ -104,7 +99,7 @@ nav a:hover {
 }
 
 .Education{
-    border: 1px red solid;
+    /* border: 1px red solid; */
     margin-top: 10rem;
     padding: 2rem 5rem 2rem 5rem;
 
@@ -116,33 +111,90 @@ nav a:hover {
 }
 
 th{
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
     font-size: 3rem;
 }
 
 td{
-    border: 1px red solid;
+    /* border: 1px red solid; */
     font-size: 2rem;
 }
 
 .Hobbies{
-    border: 1px red solid;
+    /* border: 1px red solid; */
     margin-top: 10rem;
     padding: 2rem 5rem 2rem 5rem;
 }
 .Hobbies h1{
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
     font-weight: bold;
-    font-size: 3rem;
+    font-size: 4rem;
     margin-bottom: 8rem;
-    text-align: center;
+    /* text-align: center; */
+    margin-left: 18%;
 }
 .Hobbies ul{
-    border: 1px red solid;
+    /* border: 1px red solid; */
 
-    padding-left: 35rem;
     font-size: 2rem;
     margin-bottom: 8rem;
+    margin-left: 20%;
+
+}
+
+.Awards_List{
+
+    /* border: 1px red solid; */
+
+    float: left;
+    width: 60%;
+
+    
+}
+
+.Awards_List h1{
+    /* border: 1px red solid; */
+    font-size: 4rem;
+    color: black;
+    font-weight: bold;
+    margin-left: 18%;
+    margin-top: 15%;
+}
+
+.Awards_List ul{
+    /* border: 1px red solid; */
+
+    margin-left: 20%;
+    margin-top: 2rem;
+    font-size: 2rem;
+    margin-bottom: 8rem;
+    vertical-align: text-top;
+    
+
+}
+.Awards_Pics{
+
+    /* border: 1px red solid; */
+
+    float: left;
+    width: 40%;
+    height: 50%;
+}
+
+.background {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-blend-mode: soft-light;
+    left: 0px;
+    top: 0px;
+    z-index: -1;
+    width: 100%;
+    min-height: min-content;
+    -webkit-filter: blur(5px);
+    filter: blur(15px);
+    
+
 }
