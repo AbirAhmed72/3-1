@@ -2,6 +2,8 @@ public class PrioritySetting {
 
     private int priority;
     
+
+    //lazy class
     public int getPriority(){
         return priority;
     }
