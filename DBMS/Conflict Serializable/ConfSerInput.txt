@@ -1,1 +1,4 @@
 R1(A),R2(A),R1(B),R3(B),R2(B),R3(B),W1(A),W2(B)
+R1(A),R1(B),W2(A),W1(A),R2(B)
+R1(x),R3(y),W1(x),W2(y),R3(x),W2(x)
+R1(A),R1(B),W2(A),W1(A),R2(B)

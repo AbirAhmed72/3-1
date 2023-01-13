@@ -7,7 +7,7 @@ using namespace std;
 #define BLACK 3
 #define NIL -1
 #define INF 1e9
-int prevv[N + 1];
+int previous[N + 1];
 int color[N + 1];
 int node = N;
 bool flag = false;
@@ -33,7 +33,7 @@ void DFS_Visit(int graph[][N], int u)
 
         else if (graph[u][v] == 1 && color[v] == WHITE)
         {
-            prevv[v] = u;
+            previous[v] = u;
             DFS_Visit(graph, v);
         }
     }
@@ -46,7 +46,7 @@ void DFS(int graph[][N])
     for (int u = 0; u < node; u++)
     {
         color[u] = WHITE;
-        prevv[u] = -1;
+        previous[u] = -1;
     }
     for (int u = 0; u < node; u++)
     {

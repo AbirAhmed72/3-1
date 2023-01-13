@@ -1,3 +1,16 @@
 {
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "files.associations": {
+        "any": "cpp",
+        "*.tcc": "cpp",
+        "algorithm": "cpp",
+        "random": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "memory_resource": "cpp",
+        "ostream": "cpp",
+        "regex": "cpp",
+        "utility": "cpp",
+        "iostream": "cpp"
+    }
 }
