@@ -17,21 +17,17 @@ int numOfTransactions;
 void DFS_Visit(int graph[][N], int u){
     color[u] = GREY;
 
-    for (int v = 0; v < node; v++)
-    {
+    for (int v = 0; v < node; v++){
 
-        if (graph[u][v] == 1 && color[v] == GREY)
-        {
+        if (graph[u][v] == 1 && color[v] == GREY){
             flag = true;
         }
 
-        else if (graph[u][v] == 1 && color[v] == BLACK)
-        {
+        else if (graph[u][v] == 1 && color[v] == BLACK){
             flag=false;
         }
 
-        else if (graph[u][v] == 1 && color[v] == WHITE)
-        {
+        else if (graph[u][v] == 1 && color[v] == WHITE){
             previous[v] = u;
             DFS_Visit(graph, v);
         }
@@ -41,16 +37,13 @@ void DFS_Visit(int graph[][N], int u){
 }
 void DFS(int graph[][N]){
 
-    for (int u = 0; u < node; u++)
-    {
+    for (int u = 0; u < node; u++){
         color[u] = WHITE;
         previous[u] = -1;
     }
-    for (int u = 0; u < node; u++)
-    {
+    for (int u = 0; u < node; u++){
 
-        if (color[u] == WHITE)
-        {
+        if (color[u] == WHITE){
             DFS_Visit(graph, u);
         }
     }
@@ -119,8 +112,9 @@ int main(){
 
             if (input[i][3] == input[j][3]){
 
-                if(input[i][0] == 'R' && input[j][0] == 'R')
+                if(input[i][0] == 'R' && input[j][0] == 'R'){
                     continue;
+                }
                 else{
                     cout << input[i][0] << input[j][0];
 
