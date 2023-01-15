@@ -1,27 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
-    <title>cw7 - JS Basics</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-    <!-- <h2 id="ok">This is it</h2> -->
-    <!-- <button onclick="document.getElementById('ok').innerHTML='LOL'">Click</button> -->
-    <!-- <button onclick="document.getElementById('ok').innerHTML='This is it'">Undo</button> -->
+    
+    <p id="p1">Programming</p>
+    <button onclick="document.getElementById('p1').innerHTML='webTech'">Change Paragraph</button>
+    <button onclick="okay()">it's okay</button>
+    <button ondblclick="double_click()"> Double Click here</button>
+    <a onmouseover="mouse_over()" href="http://www.iit.du.ac.bd"> IIT</a>
 
-    <!-- <p id="mark">65</p> -->
+    <div id="myDiv">
+        <!-- cmt -->
+        <p>This is para1</p>
+        <p>This is para2</p>
+        <ul>
+            <li>item1</li>
+            <li>item2</li>
+            <li>item3</li>
+        </ul>
+    </div>
 
-    <!-- <script>
-        if(parseInt(document.getElementById("mark").innerHTML) > 80){
-            console.log("A+");        }
-        else{
-            document.getElementById("mark").innerHTML = "Not A+";
+
+    <script>
+        let para1 = document.getElementById('p1');
+        para1.style.backgroundColor = "green";
+        para1.style.border = "1px solid red";
+        function okay(){
+            alert("okay bro");
+            console.log("its ok");
         }
-    </script> -->
 
-    <p id="m">mou@iit</p>
-    <p id="p">456</p>
+        function mouse_over(){
+            alert("mouse over");
+            console.log("its mouse over");
+        }
 
-    <script src="cw7.js"></script>
+        function double_click(){
+            let para1 = document.getElementById('p1');
+            para1.style.color = "blue";
+        }
+        let paras = document.getElementsByTagName('p')
+        console.log(paras[0]);
+
+
+
+        let myDiv = document.getElementById('myDiv');
+        console.log(myDiv.parentElement);
+        for(i = 0; i < 3; i++){
+            console.log(myDiv.children[2].children[i]);
+        }
+
+        let UL = myDiv.children[2].children[0]
+
+        console.log(UL.nextElementSibling);
+
+        
+
+
+
+        console.log(myDiv.firstChild);
+        console.log(myDiv.firstElementChild);
+        
+    </script>
 </body>
 </html>
