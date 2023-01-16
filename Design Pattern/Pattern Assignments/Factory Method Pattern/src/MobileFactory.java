@@ -1,6 +1,6 @@
 public class MobileFactory {
 
-    public iMobile getMobileType(String mobileType) {
+    public Mobile getMobileType(String mobileType) {
         
         if (mobileType.equals("iPhone")) {
             return new appleMobile();

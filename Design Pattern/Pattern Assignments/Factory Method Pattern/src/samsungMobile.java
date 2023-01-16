@@ -1,4 +1,4 @@
-public class samsungMobile implements iMobile{
+public class samsungMobile extends Mobile{
     @Override
     public void call() {
         System.out.println("Calling from Samsung.....");

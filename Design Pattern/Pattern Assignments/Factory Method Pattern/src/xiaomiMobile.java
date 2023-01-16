@@ -1,4 +1,4 @@
-public class xiaomiMobile implements iMobile{
+public class xiaomiMobile extends Mobile{
     @Override
     public void call() {
         System.out.println("Calling from Xiaomi....");

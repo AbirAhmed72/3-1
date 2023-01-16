@@ -1,4 +1,4 @@
-class appleMobile implements iMobile {
+class appleMobile extends Mobile {
     
     @Override
     public void call() {
