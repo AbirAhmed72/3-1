@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .top3{
+            border: 1px red solid;
+            width: 33%;
+            float: left;
+            height: 60vh;
+            box-sizing: border-box;
+            /* display: flex;
+            flex-direction: column;
+            align-items: flex-end; */
+            display: grid;
+            grid-template-rows: 1fr auto;
+        }
+        .btn{
+            width: 100%;
+            height: 4rem;
+        }            
+        .bottom{
+            clear: both;
+            border: 1px blue solid;
+            height: 20vh;
+            box-sizing: border-box;
+        }
+        .lower{
+            width: 33%;
+            height: 10vh;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="top3" id="div1">
+        
+    
+        <button type="button" id="two" class="btn btn-lg btn-default">2</button>
+        <button type="button" id="four" class="btn btn-lg btn-default">4</button>
+        <button type="button" id="three" class="btn btn-lg btn-default">3</button>
+        <button type="button" id="one" class="btn btn-lg btn-default">1</button>
+            
+    </div>
+    <div class="top3" id="div2">
+
+    </div>
+    <div class="top3" id="div3">
+
+    </div>
+
+    <div class="bottom">
+        <button class="lower" onclick="onetwo()">1 -> 2</button>
+        <button class="lower" onclick="twothree()">2 -> 3</button>
+        <button class="lower" onclick="threeone()">3 -> 1</button>
+        <button class="lower" onclick="threetwo()">3 -> 2</button>
+        <button class="lower" onclick="twoone()">2 -> 1</button>
+        <button class="lower" onclick="onethree()">1 -> 3</button>
+    </div>
+    
+    <script>
+        function onetwo(){
+            let divs = document.getElementsByTagName('div');
+            let btn = divs[0].firstElementChild;
+            divs[0].removeChild(btn);
+            divs[1].insertBefore(btn, divs[1].firstElementChild);
+        }
+        function twothree(){
+            let divs = document.getElementsByTagName('div');
+            let btn = divs[1].firstElementChild;
+            divs[1].removeChild(btn);
+            divs[2].insertBefore(btn, divs[2].firstElementChild);
+        }
+        function threeone(){
+            let divs = document.getElementsByTagName('div');
+            let btn = divs[2].firstElementChild;
+            divs[2].removeChild(btn);
+            divs[0].insertBefore(btn, divs[0].firstElementChild);
+        }
+        function threetwo(){
+            let divs = document.getElementsByTagName('div');
+            let btn = divs[2].firstElementChild;
+            divs[2].removeChild(btn);
+            divs[1].insertBefore(btn, divs[1].firstElementChild);
+        }
+        function twoone(){
+            let divs = document.getElementsByTagName('div');
+            let btn = divs[1].firstElementChild;
+            divs[1].removeChild(btn);
+            divs[0].insertBefore(btn, divs[0].firstElementChild);
+        }
+        function onethree(){
+            let divs = document.getElementsByTagName('div');
+            let btn = divs[0].firstElementChild;
+            divs[0].removeChild(btn);
+            divs[2].insertBefore(btn, divs[2].firstElementChild);
+        }
+    </script>
+</body>
+</html>
