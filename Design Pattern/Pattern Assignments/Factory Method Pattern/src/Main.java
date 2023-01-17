@@ -3,10 +3,12 @@ public class Main {
         MobileFactory mFactory = new MobileFactory();
 
         Mobile iphone = mFactory.getMobileType("iPhone");
+        iphone.switchOn();
         iphone.call();
         iphone.message();
 
         Mobile samsung = mFactory.getMobileType("Samsung");
+        samsung.switchOn();
         samsung.call();
         samsung.message();
 
