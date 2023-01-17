@@ -9,9 +9,9 @@
     <style>
         .top3{
             border: 1px red solid;
-            width: 33%;
+            width: 32%;
             float: left;
-            height: 60vh;
+            height: 30rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column-reverse;
@@ -21,22 +21,24 @@
         }
         .btn{
             width: 100%;
-            height: 4rem;
+            height: 6rem;
         }            
         .bottom{
             clear: both;
             border: 1px blue solid;
-            height: 20vh;
+            height: 10rem;
             box-sizing: border-box;
         }
         .lower{
-            width: 33%;
-            height: 10vh;
+            width: 32%;
+            height: 10rem;
             box-sizing: border-box;
         }
     </style>
 </head>
 <body>
+
+    <h1 style="text-align: center;">Welcome to Tower of Hanoi Game!</h1>
     <div class="top3" id="div1">
         
     
@@ -57,47 +59,68 @@
         <button class="lower" onclick="onetwo()">1 -> 2</button>
         <button class="lower" onclick="twothree()">2 -> 3</button>
         <button class="lower" onclick="threeone()">3 -> 1</button>
-        <button class="lower" onclick="threetwo()">3 -> 2</button>
         <button class="lower" onclick="twoone()">2 -> 1</button>
+        <button class="lower" onclick="threetwo()">3 -> 2</button>
         <button class="lower" onclick="onethree()">1 -> 3</button>
+        <button class="lower" onclick="resetGame()">Reset Game</button>
     </div>
     
     <script>
+        let divs = document.getElementsByTagName('div');
+
         function onetwo(){
-            let divs = document.getElementsByTagName('div');
-            let btn = divs[0].firstElementChild;
+            let btn = divs[0].lastElementChild;
             divs[0].removeChild(btn);
-            divs[1].insertBefore(btn, divs[1].firstElementChild);
+            divs[1].append(btn);
         }
         function twothree(){
-            let divs = document.getElementsByTagName('div');
-            let btn = divs[1].firstElementChild;
+            let btn = divs[1].lastElementChild;
             divs[1].removeChild(btn);
-            divs[2].insertBefore(btn, divs[2].firstElementChild);
+            divs[2].append(btn);
         }
         function threeone(){
-            let divs = document.getElementsByTagName('div');
-            let btn = divs[2].firstElementChild;
+            let btn = divs[2].lastElementChild;
             divs[2].removeChild(btn);
-            divs[0].insertBefore(btn, divs[0].firstElementChild);
+            divs[0].append(btn);
         }
         function threetwo(){
-            let divs = document.getElementsByTagName('div');
-            let btn = divs[2].firstElementChild;
+            let btn = divs[2].lastElementChild;
             divs[2].removeChild(btn);
-            divs[1].insertBefore(btn, divs[1].firstElementChild);
+            divs[1].append(btn);
         }
         function twoone(){
-            let divs = document.getElementsByTagName('div');
-            let btn = divs[1].firstElementChild;
+            let btn = divs[1].lastElementChild;
             divs[1].removeChild(btn);
-            divs[0].insertBefore(btn, divs[0].firstElementChild);
+            divs[0].append(btn);
         }
         function onethree(){
-            let divs = document.getElementsByTagName('div');
-            let btn = divs[0].firstElementChild;
+            let btn = divs[0].lastElementChild;
             divs[0].removeChild(btn);
-            divs[2].insertBefore(btn, divs[2].firstElementChild);
+            divs[2].append(btn);
+        }
+
+        function shuffle(array) {
+            while(array[0] === 1 && array[1] === 2 && array[2] === 3 && array[3] === 4){
+               for (let i = array.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+            return array; 
+        }
+
+        function resetGame(){
+            let numbers = [1, 2, 3, 4];
+            shuffle(numbers);
+            // console.log(numbers);
+            while(divs[1].childElementCount > 0 || divs[2].childElementCount > 0){
+                console.log("child ase");
+                console.log(divs[1].childNodes);
+                
+                divs[0].append(div[1].firstElementChild);
+                divs[0].append(div[2].firstElementChild);
+            }
+            
         }
     </script>
 </body>
