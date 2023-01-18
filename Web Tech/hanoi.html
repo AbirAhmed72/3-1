@@ -16,10 +16,8 @@
             display: flex;
             flex-direction: column-reverse;
             align-items: flex-end;
-            /* display: grid;
-            grid-template-rows: 1fr auto; */
         }
-        .btn{
+        .upper{
             width: 100%;
             height: 6rem;
         }            
@@ -31,21 +29,21 @@
         }
         .lower{
             width: 32%;
-            height: 10rem;
+            height: 5rem;
             box-sizing: border-box;
         }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align: center;">Welcome to Tower of Hanoi Game!</h1>
+    <h1 style="text-align: center;">Welcome to Tower of Abir er khela!</h1>
     <div class="top3" id="div1">
         
     
-        <button type="button" id="two" class="btn btn-lg btn-default">2</button>
-        <button type="button" id="four" class="btn btn-lg btn-default">4</button>
-        <button type="button" id="three" class="btn btn-lg btn-default">3</button>
-        <button type="button" id="one" class="btn btn-lg btn-default">1</button>
+        <button type="button" id="two" class="upper">2</button>
+        <button type="button" id="four" class="upper">4</button>
+        <button type="button" id="three" class="upper">3</button>
+        <button type="button" id="one" class="upper">1</button>
             
     </div>
     <div class="top3" id="div2">
@@ -63,6 +61,7 @@
         <button class="lower" onclick="threetwo()">3 -> 2</button>
         <button class="lower" onclick="onethree()">1 -> 3</button>
         <button class="lower" onclick="resetGame()">Reset Game</button>
+        <button class="lower" onclick="checkGame()">Check Result</button>
     </div>
     
     <script>
@@ -109,18 +108,57 @@
             return array; 
         }
 
+        let ansNumbers = [1, 2, 3, 4];
+
         function resetGame(){
-            let numbers = [1, 2, 3, 4];
-            shuffle(numbers);
-            // console.log(numbers);
-            while(divs[1].childElementCount > 0 || divs[2].childElementCount > 0){
-                console.log("child ase");
-                console.log(divs[1].childNodes);
-                
-                divs[0].append(div[1].firstElementChild);
-                divs[0].append(div[2].firstElementChild);
+            let shuffledNumbers = [1, 2, 3, 4];
+            shuffledNumbers = shuffle(shuffledNumbers);
+
+            while(divs[1].childElementCount > 0){
+                let btnOfDiv2 = divs[1].lastElementChild;
+                divs[1].removeChild(btnOfDiv2);
+                divs[0].append(btnOfDiv2);
             }
-            
+
+            while(divs[2].childElementCount > 0){
+                let btnOfDiv3 = divs[2].lastElementChild;
+                divs[2].removeChild(btnOfDiv3);
+                divs[0].append(btnOfDiv3);
+            }
+        
+            bricks = document.getElementsByClassName('upper');
+           
+            bricks[0].innerHTML = shuffledNumbers[0];
+            bricks[1].innerHTML = shuffledNumbers[1];
+            bricks[2].innerHTML = shuffledNumbers[2];
+            bricks[3].innerHTML = shuffledNumbers[3];            
+        }
+
+        function checkGame(){
+            for(let i=0; i<divs.length; i++){
+                if(divs[i].childElementCount === 4){
+                    // console.log("hoise");
+                    let ansBtns = divs[i].children;
+                    let userAns = [ ];
+                    // console.log(ansBtns[0]);
+                    for(let i=0; i<ansBtns.length; i++){
+                        userAns.push(parseInt(ansBtns[i].innerText));
+                    }
+
+                    let areEqual = userAns.reverse().every((element, index) => element
+                                                         === ansNumbers[index]);
+
+                    if(areEqual){
+                        document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "You won! You're clearly the KING 👑";
+                    }
+                    else{
+                        document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "You've failed miserably";
+                    }
+                    
+                }
+            }
         }
     </script>
 </body>
