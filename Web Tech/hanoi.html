@@ -11,7 +11,7 @@
             border: 1px red solid;
             width: 32%;
             float: left;
-            height: 30rem;
+            height: 20rem;
             box-sizing: border-box;
             display: flex;
             flex-direction: column-reverse;
@@ -19,7 +19,7 @@
         }
         .upper{
             width: 100%;
-            height: 6rem;
+            height: 5rem;
         }            
         .bottom{
             clear: both;
@@ -54,45 +54,74 @@
     </div>
 
     <div class="bottom">
-        <button class="lower" onclick="onetwo()">1 -> 2</button>
+        <!-- <button class="lower" onclick="onetwo()">1 -> 2</button>
         <button class="lower" onclick="twothree()">2 -> 3</button>
         <button class="lower" onclick="threeone()">3 -> 1</button>
         <button class="lower" onclick="twoone()">2 -> 1</button>
         <button class="lower" onclick="threetwo()">3 -> 2</button>
         <button class="lower" onclick="onethree()">1 -> 3</button>
         <button class="lower" onclick="resetGame()">Reset Game</button>
+        <button class="lower" onclick="checkGame()">Check Result</button> -->
+
+        <button class="lower" onclick="playGame(0, 1)">1 -> 2</button>
+        <button class="lower" onclick="playGame(1, 2)">2 -> 3</button>
+        <button class="lower" onclick="playGame(2, 0)">3 -> 1</button>
+        <button class="lower" onclick="playGame(1, 0)">2 -> 1</button>
+        <button class="lower" onclick="playGame(2, 1)">3 -> 2</button>
+        <button class="lower" onclick="playGame(0, 2)">1 -> 3</button>
+        <button class="lower" onclick="resetGame()">Reset Game</button>
         <button class="lower" onclick="checkGame()">Check Result</button>
     </div>
     
     <script>
-        let divs = document.getElementsByTagName('div');
+        let divs = document.getElementsByClassName('top3');
+
+        function playGame(divIndex1, divIndex2){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is being played 🎮";
+            let btn = divs[divIndex1].lastElementChild;
+            divs[divIndex1].removeChild(btn);
+            divs[divIndex2].append(btn);
+        }
 
         function onetwo(){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is being played 🎮";
             let btn = divs[0].lastElementChild;
             divs[0].removeChild(btn);
             divs[1].append(btn);
         }
         function twothree(){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is being played 🎮";
             let btn = divs[1].lastElementChild;
             divs[1].removeChild(btn);
             divs[2].append(btn);
         }
         function threeone(){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is being played 🎮";
             let btn = divs[2].lastElementChild;
             divs[2].removeChild(btn);
             divs[0].append(btn);
         }
         function threetwo(){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is being played 🎮";
             let btn = divs[2].lastElementChild;
             divs[2].removeChild(btn);
             divs[1].append(btn);
         }
         function twoone(){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is being played 🎮";
             let btn = divs[1].lastElementChild;
             divs[1].removeChild(btn);
             divs[0].append(btn);
         }
         function onethree(){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is being played 🎮";
             let btn = divs[0].lastElementChild;
             divs[0].removeChild(btn);
             divs[2].append(btn);
@@ -111,6 +140,8 @@
         let ansNumbers = [1, 2, 3, 4];
 
         function resetGame(){
+            document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "Game is reset ⏪";
             let shuffledNumbers = [1, 2, 3, 4];
             shuffledNumbers = shuffle(shuffledNumbers);
 
@@ -151,12 +182,18 @@
                     if(areEqual){
                         document.getElementsByTagName('h1')[0].innerHTML
                                                  = "You won! You're clearly the KING 👑";
+                        break;
                     }
                     else{
                         document.getElementsByTagName('h1')[0].innerHTML
-                                                 = "You've failed miserably";
+                                                 = "You've failed miserably 👎";
+                        break;
                     }
                     
+                }
+                else{
+                    document.getElementsByTagName('h1')[0].innerHTML
+                                                 = "That's not how the game works 😒";
                 }
             }
         }
