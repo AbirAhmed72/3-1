@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1>Course enrollment form</h1>
+    <form name="myForm">
+        <label for="id_name">Name</label>
+        <input type="text" id="id_name" name="myName">
+    
+        <br>
+
+        <label for="id_pass">Password</label>
+        <input type="password" id="id_pass" name="myPass">
+
+        <br>
+
+        <label for="id_age">Age</label>
+        <input type="number" id="id_age" name="myAge">
+        <!-- Gender
+        <input type="radio" id="male" name="gender" value="male">
+        <label for="male">male</label>
+        <input type="radio" id="female" name="gender" value="female">
+        <label for="female">female</label>
+        
+        <br>
+        Select the topics that you want to learn:<br>
+        <input type="checkbox" id="html" name="topic1" value="html">
+        <label for="html">HTML</label><br>
+        <input type="checkbox" id="css" name="topic2" value="css">
+        <label for="css">CSS</label><br>
+        <input type="checkbox" id="js" name="topic3" value="js">
+        <label for="js">JS</label><br>
+    
+        Level of study:
+        <select name="degree" id="degree">
+            <option value="ssc">SSC</option>
+            <option value="hsc">HSC</option>
+            <option value="honors">Honors</option>
+            <option value="masters">Masters</option>
+        </select><br><br>
+        Address
+        <textarea name="address"></textarea><br/><br> -->
+        <input type="submit" value="Submit" onclick="validate()">
+    </form>
+
+    <script>
+
+        function validate(){
+            // let name = document.forms['myForm']['myName'].value;
+            let name = document.forms.myForm.myName.value;
+            //both are same
+            // if(name){
+            //     alert(name);
+            // }
+            // else{
+            //     alert("why null bro");
+            // }
+
+            // let gender = document.forms.myForm.gender.value;
+            // if(gender) alert("you're " + gender);
+            // else alert("why null");
+
+            let passwordLength = document.forms.myForm.myPass.length;
+            if(password < 6) alert("too small");
+            // else alert("nice pass king");
+
+            let age = document.forms.myForm.myAge.value;
+            if(age <13) alert("get older");
+            // else alert("proceed");
+
+                
+
+        }
+
+        //--------------JS CLASSES----------------
+
+        // class Student{
+        //     constructor(name, roll){
+        //         this.name = name;
+        //         this.roll = roll;
+        //     }
+        //     printStudent(){
+        //         console.log(this.name + " " + this.roll);
+        //     }
+        // }
+
+        // let myStudent = new Student("Abir", 1229);
+
+        // myStudent.printStudent();
+        // console.log(myStudent.name);
+        // console.log(myStudent['name']);
+        // console.log(myStudent['roll']);
+    </script>
+</body>
+</html>
