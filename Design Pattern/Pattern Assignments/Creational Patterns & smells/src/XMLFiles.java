@@ -7,10 +7,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import constants.constants;
+// import constants.constants;
 
 /**
- * A abstract class with specfic set of methods to avoid repitition of code.
+ * A abstract class with specific set of methods to avoid repetition of code.
  * @param path
  */
 public abstract class XMLFiles {
