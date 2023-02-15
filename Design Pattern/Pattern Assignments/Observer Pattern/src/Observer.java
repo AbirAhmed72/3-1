@@ -1,5 +1,5 @@
 public abstract class Observer {
-    public static void update(){
-        
+    public void update(Subject subject){
+
     }
 }
