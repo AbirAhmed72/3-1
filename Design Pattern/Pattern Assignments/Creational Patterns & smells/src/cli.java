@@ -23,7 +23,8 @@ public class cli {
      * the databases created. It acts as a pointer to the Database File. So, We
      * instantly load the registry file.
      */
-    static RegistryFile registry;
+    static RegistryFile registry = RegistryFile.getInstance(constants.DATA_XML_PATH);
+
 
     /**
      * This attribute is for storing the DatabaseFile instance. Which is assigned
@@ -35,7 +36,7 @@ public class cli {
     public static void main(String[] args) {                        //main alada korbo
         print(constants.HEADING);
 
-        registry = new RegistryFile(constants.DATA_XML_PATH);       //singleton
+        // registry = new RegistryFile(constants.DATA_XML_PATH);      //singleton
         Scanner input = new Scanner(System.in);
 
         while (true) {
@@ -58,115 +59,138 @@ public class cli {
         input.close();
     }
 
+
+    //method extraction
     private static void cliInputs(String input) {
         String[] cmdArgs = input.split(" ");
-
-        switch (cmdArgs[0]) {                           //switch cases
-            case "new": {
-                registry.createNewDatabase(cmdArgs[1]);
+    
+        switch (cmdArgs[0]) {
+            case "new":
+                handleNewCommand(cmdArgs);
                 break;
-            }
-
-            case "use": {
-                String path = registry.getDatabasePath(cmdArgs[1], false);
-
-                if (path != null) {
-                    CurrentDb = new DatabaseFile(path);
-                    CurrentDb.EditMode();
-                    print("Successfully loaded Database named: " + cmdArgs[1]);
-                } else {
-                    print("Database not found");
-                }
+            case "use":
+                handleUseCommand(cmdArgs);
                 break;
-            }
-
-            case "list": {
-                registry.listAllDatabases();
+            case "list":
+                handleListCommand();
                 break;
-            }
-
-            case "help;": {
-                print(constants.HELP_COMMANDS);
+            case "help;":
+                handleHelpCommand();
                 break;
-            }
-
-            case "info": {
-                // For querying the meta info of the database
-                // TODO
-            }
-
-            case "schema": {
-                if (CurrentDb != null) {
-                    String xy = cmdArgs[1];
-
-                    if (xy.equals("show")) {
-                        print(CurrentDb.getSchema());
-                    } else {
-                        String[] schemaVals = xy.split(",");
-                        if (schemaVals.length > 1) {
-                            CurrentDb.createSchema(xy);
-                        } else {
-                            print("There should be atleast 2 columns of data");
-                        }
-                    }
-
-                } else {
-                    print(errors.NO_DATABASE_SELECTED);
-                }
+            case "info":
+                handleInfoCommand();
                 break;
-            }
-
-            case "add": {
-                if (CurrentDb != null) {
-                    CurrentDb.addData(cmdArgs[1]);
-                } else {
-                    print(errors.NO_DATABASE_SELECTED);
-                }
-
+            case "schema":
+                handleSchemaCommand(cmdArgs);
                 break;
-            }
-
-            case "read": {
-                if (CurrentDb != null) {
-                    if (cmdArgs.length == 1) {
-                        CurrentDb.readData();
-                    } else {
-                        CurrentDb.readData(cmdArgs[1]);
-                    }
-                } else {
-                    print(errors.NO_DATABASE_SELECTED);
-                }
-
+            case "add":
+                handleAddCommand(cmdArgs);
                 break;
-            }
-
-            case "drop": {
-                registry.deleteDatabase(cmdArgs[1]);
+            case "read":
+                handleReadCommand(cmdArgs);
                 break;
-            }
-
-            case "update": {
-                // TODO
-                if (CurrentDb != null) {
-                }
+            case "drop":
+                handleDropCommand(cmdArgs);
                 break;
-            }
-
-            case "delete": {
-                if (CurrentDb != null) {
-                    CurrentDb.deleteData(cmdArgs[1]);
-                } else {
-                    print(errors.NO_DATABASE_SELECTED);
-                }
+            case "update":
+                handleUpdateCommand(cmdArgs);
                 break;
-            }
-
-            default: {
+            case "delete":
+                handleDeleteCommand(cmdArgs);
+                break;
+            default:
                 print("UNKNOWN COMMAND: " + cmdArgs[0] + "\nType `help;` for commands list");
                 break;
-            }
         }
     }
+    
+    private static void handleNewCommand(String[] cmdArgs) {
+        registry.createNewDatabase(cmdArgs[1]);
+    }
+    
+    private static void handleUseCommand(String[] cmdArgs) {
+        String path = registry.getDatabasePath(cmdArgs[1], false);
+    
+        if (path != null) {
+            CurrentDb = new DatabaseFile(path);
+            CurrentDb.EditMode();
+            print("Successfully loaded Database named: " + cmdArgs[1]);
+        } else {
+            print("Database not found");
+        }
+    }
+    
+    private static void handleListCommand() {
+        registry.listAllDatabases();
+    }
+    
+    private static void handleHelpCommand() {
+        print(constants.HELP_COMMANDS);
+    }
+    
+    private static void handleInfoCommand() {
+        // For querying the meta info of the database
+        // TODO
+    }
+    
+    private static void handleSchemaCommand(String[] cmdArgs) {
+        if (CurrentDb != null) {
+            String xy = cmdArgs[1];
+    
+            if (xy.equals("show")) {
+                print(CurrentDb.getSchema());
+            } else {
+                String[] schemaVals = xy.split(",");
+                if (schemaVals.length > 1) {
+                    CurrentDb.createSchema(xy);
+                } else {
+                    print("There should be atleast 2 columns of data");
+                }
+            }
+    
+        } else {
+            print(errors.NO_DATABASE_SELECTED);
+        }
+    }
+    
+    private static void handleAddCommand(String[] cmdArgs) {
+        if (CurrentDb != null) {
+            CurrentDb.addData(cmdArgs[1]);
+        } else {
+            print(errors.NO_DATABASE_SELECTED);
+        }
+    }
+    
+    private static void handleReadCommand(String[] cmdArgs) {
+        if (CurrentDb != null) {
+            if (cmdArgs.length == 1) {
+                CurrentDb.readData();
+            } else {
+                CurrentDb.readData(cmdArgs[1]);
+            }
+        } else {
+            print(errors.NO_DATABASE_SELECTED);
+        }
+    }
+    
+    private static void handleDropCommand(String[] cmdArgs) {
+        registry.deleteDatabase(cmdArgs[1]);
+    }
+    
+    private static void handleUpdateCommand(String[] cmdArgs) {
+        // TODO
+        if (CurrentDb != null) {
+        }
+    }
+    
+    private static void handleDeleteCommand(String[] cmdArgs) {
+        if (CurrentDb != null) {
+            CurrentDb.deleteData(cmdArgs[1]);
+        } else {
+            print(errors.NO_DATABASE_SELECTED);
+        }
+    }
+    
 
     private static void print(String x) {
         System.out.println(x);

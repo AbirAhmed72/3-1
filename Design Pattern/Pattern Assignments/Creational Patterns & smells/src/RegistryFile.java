@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
+
 // import constants.constants;
 
 /**
@@ -13,9 +14,21 @@ import org.w3c.dom.*;
  * 'minidb.xml'
  */
 public class RegistryFile extends XMLFiles {
+    
+    //singleton applied here
+    private static RegistryFile instance = null;
+    private final String registryFilePath;
 
-    public RegistryFile(String path) {
-        super(path);
+    private RegistryFile(String registryFilePath) {
+        super(registryFilePath);
+        this.registryFilePath = registryFilePath;
+    }
+
+    public static RegistryFile getInstance(String registryFilePath) {
+        if (instance == null) {
+            instance = new RegistryFile(registryFilePath);
+        }
+        return instance;
     }
 
     void createFile() {
