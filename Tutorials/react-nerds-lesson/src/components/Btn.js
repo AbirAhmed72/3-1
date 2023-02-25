@@ -20,5 +20,5 @@ function BtnHov(){
     );
 }
 
-// export default BtnClk;
+export {BtnClk};
 export default BtnHov;
