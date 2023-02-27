@@ -60,83 +60,46 @@
 </head>
 <body>
   <div class="container">
-    <h1>Form Confirmation</h1>
+    <!-- <h1>Form Confirmation</h1> -->
 
     <?php
-        // $full_name = isset($_POST['firstName']) ? $_POST['firstName'] : '';
-        // $email = isset($_POST['email']) ? $_POST['email'] : '';
-        // $address = isset($_POST['address']) ? $_POST['address'] : '';
-        // $picture = isset($_POST['picture']) ? $_POST['picture'] : '';
 
-        // if (empty($full_name) || empty($email) || empty($address)) {
-        // echo '<p>Error: Please fill all required fields</p>';
-        // } else {
-        // echo '<img src="uploads/' . $picture . '" alt="User Picture">';
-        // echo '<dl>';
-        // echo '<dt>Full Name</dt><dd>' . $full_name . '</dd>';
-        // echo '<dt>Email</dt><dd>' . $email . '</dd>';
-        // echo '<dt>Address</dt><dd>' . $address . '</dd>';
-        // echo '</dl>';
-        // }
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "cw";
 
-        if(isset($_POST['picture'])) {
-            $target_dir = "uploads/";
-            $target_file = $target_dir . basename($_FILES["image-upload"]["name"]);
-            $uploadOk = 1;
-            $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-            // Check if image file is a actual image or fake image
-            $check = getimagesize($_FILES["image-upload"]["tmp_name"]);
-            if($check !== false) {
-                $uploadOk = 1;
-            } else {
-                echo "File is not an image.";
-                $uploadOk = 0;
-            }
-            // Check if file already exists
-            if (file_exists($target_file)) {
-                echo "Sorry, file already exists.";
-                $uploadOk = 0;
-            }
-            // Check file size
-            if ($_FILES["image-upload"]["size"] > 500000) {
-                echo "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-            // Allow certain file formats
-            if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-            && $imageFileType != "gif" ) {
-                echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                $uploadOk = 0;
-            }
-            // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 0) {
-                echo "Sorry, your file was not uploaded.";
-            // if everything is ok, try to upload file
-            } else {
-                if (move_uploaded_file($_FILES["image-upload"]["tmp_name"], $target_file)) {
-                echo "The file ". htmlspecialchars( basename( $_FILES["image-upload"]["name"])). " has been uploaded.";
-                } else {
-                echo "Sorry, there was an error uploading your file.";
-                }
-            }
-
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
         }
 
-        
+        $sql = "INSERT INTO Form (Fname, Lname, Email, Address) 
+                VALUES ('$_POST[firstName]', '$_POST[lastName]', '$_POST[email]', '$_POST[address]')";
 
-        
-        // echo '<img src="favicon.ico' . $_POST['picture'] . '" alt="User Picture">';
+        if ($conn->query($sql) === TRUE) {
+        echo '<h1>Form Confirmation</h1>';
+        } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+
+        $conn->close();
+
+        $imageName = $_FILES['picture']['name'];
+        $tempName = $_FILES['picture']['tmp_name'];
+        $uploadLoc = './'.$imageName;
+        move_uploaded_file($tempName, $uploadLoc);
+
         echo '<dl>';
         echo '<dt>Full Name</dt><dd>' . $_POST['firstName'], " ", $_POST['lastName'] . '</dd>';
         echo '<dt>Email</dt><dd>' . $_POST['email'] . '</dd>';
         echo '<dt>Address</dt><dd>' . $_POST['address'] . '</dd>';
         echo '</dl>';
+        echo "<img src='$uploadLoc'>";
+
     ?>
-
-    <img src="uploads/<?php echo basename($_FILES["image-upload"]["name"]); ?>" alt="Uploaded image">
-
-
-    <!-- <p><a href="index.php">Go back to the form</a></p> -->
   </div>
 </body>
 </html>

@@ -104,10 +104,10 @@
     </form>
 
     <script>
-        const cancelBtn = document.getElementById('cancel-btn');
+        const cancelButton = document.getElementById('cancel-btn');
         const form = document.querySelector('form');
 
-        cancelBtn.addEventListener('click', function() {
+        cancelButton.addEventListener('click', () => {
             form.reset();
         });
 
