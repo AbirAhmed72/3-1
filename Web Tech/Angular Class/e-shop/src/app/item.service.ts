@@ -17,4 +17,8 @@ export class ItemService {
   getItems(): Item[]{
     return this.items;
   }
+
+  setItems(i:Item[]): void{
+    this.items=i;
+  }
 }

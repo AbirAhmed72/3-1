@@ -14,4 +14,16 @@ export class ItemListComponent implements OnInit{
       console.log(this.itemService.getItems());
       this.myItems = this.itemService.getItems();
   }
+
+  requestItem(quantity: Number): void{
+    
+    alert("item " + quantity + " requested");
+  }
+
+  buyItem(id: any): void{
+    this.myItems[id-1].quantity = this.myItems[id-1].quantity-1;
+    this.itemService.setItems(this.myItems);
+    console.log(this.itemService.getItems());  
+    alert("item now became: " + this.myItems[id-1].quantity + " pieces");
+  }
 }
