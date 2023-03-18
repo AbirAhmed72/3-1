@@ -11,6 +11,8 @@ import {useReducer} from 'react';
 import Homepage from './components/Homepage';
 import AboutMe from './components/AboutMe';
 import {Routes, Route, Link} from 'react-router-dom';
+import Login from './components/login';
+import Registration from './components/reg';
 
 const topDesserts = [
   {
@@ -95,10 +97,13 @@ function App() {								//root
         <Route path='/about-me' element={<AboutMe/>}/>
       </Routes>
     </div> */}
-    <div>
+    {/* <div>
       <ol>
         {listItems}
       </ol>
+    </div> */}
+    <div>
+      <Login></Login>
     </div>
 	</div>
 
