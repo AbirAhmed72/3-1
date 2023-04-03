@@ -1,7 +1,7 @@
 public class PayPalPayment implements IPaymentMethod{
     @Override
-    public boolean match(String paymentMethod) {
-        return paymentMethod.equalsIgnoreCase("paypalpayment");
+    public boolean match(String method) {
+        return method.equalsIgnoreCase("paypalpayment");
 
     }
 

@@ -1,7 +1,7 @@
 public class CryptoPayment implements IPaymentMethod{
     @Override
-    public boolean match(String paymentMethod) {
-        return paymentMethod.equalsIgnoreCase("cryptopayment");
+    public boolean match(String method) {
+        return method.equalsIgnoreCase("cryptopayment");
 
     }
 

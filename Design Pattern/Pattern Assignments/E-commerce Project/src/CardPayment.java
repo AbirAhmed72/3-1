@@ -1,7 +1,7 @@
 public class CardPayment implements IPaymentMethod{
     @Override
-    public boolean match(String paymentMethod) {
-        return paymentMethod.equalsIgnoreCase("cardpayment");
+    public boolean match(String method) {
+        return method.equalsIgnoreCase("cardpayment");
     }
 
     @Override

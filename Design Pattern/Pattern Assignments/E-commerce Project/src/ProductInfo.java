@@ -70,27 +70,27 @@ public class ProductInfo {
 
     public void setProductInfo(){
         products.add("Samsung");
-        price.add(12.0);
+        price.add(62000.0);
         inventory.add(135);
 
-        products.add("Xiaomi");
-        price.add(35.0);
+        products.add("Xiami");
+        price.add(35000.0);
         inventory.add(200);
 
-        products.add("Apple");
-        price.add(15.0);
+        products.add("Oppo");
+        price.add(15000.0);
         inventory.add(115);
 
-        products.add("Oppo");
-        price.add(100.0);
+        products.add("Vivo");
+        price.add(10000.0);
         inventory.add(30);
 
-        products.add("Vivo");
-        price.add(250.0);
+        products.add("Oneplus");
+        price.add(25000.0);
         inventory.add(20);
 
-        products.add("Oneplus");
-        price.add(5.0);
+        products.add("Apple");
+        price.add(50000.0);
         inventory.add(100);
 
     }

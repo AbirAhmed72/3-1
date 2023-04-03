@@ -1,5 +1,5 @@
 public interface IPaymentMethod {
 
-    boolean match(String paymentMethod);
+    boolean match(String method);
     String pay(Double amount);
 }
