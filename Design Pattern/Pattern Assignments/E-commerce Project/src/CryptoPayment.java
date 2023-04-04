@@ -7,6 +7,6 @@ public class CryptoPayment implements IPaymentMethod{
 
     @Override
     public String pay(Double amount) {
-        return " CryptoCurrency for payment";
+        return " Paid using CryptoCurrency with an amount of: " + amount;
     }
 }

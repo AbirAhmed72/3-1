@@ -7,6 +7,6 @@ public class PayPalPayment implements IPaymentMethod{
 
     @Override
     public String pay(Double amount) {
-        return " PayPal for payment";
+        return "Paid using PayPal";
     }
 }

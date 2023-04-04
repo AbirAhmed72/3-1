@@ -6,7 +6,7 @@ public class CardPayment implements IPaymentMethod{
 
     @Override
     public String pay(Double amount) {
-        return " Credit Card for payment";
+        return "Paid using Credit Card";
     }
 
 }

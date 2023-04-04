@@ -1,6 +1,6 @@
-public interface OrderMediatorInterface {
+public interface IOrderMediator {
     void setProductInfo(ProductInfo productInfo);
-    void setPaymentInfo(PaymentInfo paymentInfo);
+    void setPaymentInfo(PaymentInfoContext paymentInfo);
     void setUserInfo(UserInfo userInfo);
     void placeOrder();
 }

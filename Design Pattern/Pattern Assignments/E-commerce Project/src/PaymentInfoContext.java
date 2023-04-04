@@ -21,12 +21,6 @@ public class PaymentInfoContext {
     ));
 
     private void setPaymentMethod(){
-//        if(userChoice.compareToIgnoreCase("creditCard")==0)
-//            paymentMethod = "CreditCard";
-//        else if(userChoice.compareToIgnoreCase("payPal")==0)
-//            paymentMethod = "PayPal";
-//        else
-//            paymentMethod = "Crypto";
         for(IPaymentMethod method: paymentMethods){
             if(method.match(this.userChoice)){
                 paymentMethod = method.pay(this.paymentAmount);
@@ -36,7 +30,7 @@ public class PaymentInfoContext {
     }
 
     public void getPaymentMethod(){
-        System.out.println("User chose: " + paymentMethod);
+        System.out.println("Payment Method: " + paymentMethod);
     }
 
     public void setCurrentUserBalance() {
