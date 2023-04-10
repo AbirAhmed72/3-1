@@ -1,7 +1,11 @@
 from model import Item
 from fastapi import FastAPI
+from database import *
 
 app = FastAPI()
+@app.on_event("startup")
+async def connect_with_database():
+    await connect_db()
 
 @app.get('/')
 async def read_root(): # type: ignore
@@ -21,6 +25,7 @@ async def read_bool(status: bool):
 
 @app.post("/item/", response_model=Item)
 async def post_item(item: Item):
+    await insert(item)
     return item
 
 @app.put("/item/", response_model=Item)
