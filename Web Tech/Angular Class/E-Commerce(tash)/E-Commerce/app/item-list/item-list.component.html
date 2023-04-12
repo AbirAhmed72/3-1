@@ -1,0 +1,10 @@
+<ul>
+    <li *ngFor="let item of myItems; let i = index">
+        <h3>{{item.name}}</h3>
+        <p>price:{{item.price}}</p>
+        <p>quantity:{{item.quantity}}</p>
+        <button *ngIf="item.quantity>0" (click)="buyItem(i)">Buy</button>
+        <button *ngIf="item.quantity<=0" (click)="requestItem(item.name, i)">Restock</button><br><br>
+        <button (click)="updateItem(i)">Update</button>
+    </li>
+</ul>
