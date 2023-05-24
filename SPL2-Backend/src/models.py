@@ -31,6 +31,9 @@ class Doctors(Base):
 
     consultation = relationship("Consultation", back_populates="doctors")
 
+    class Config:
+        orm_mode = True
+
 class Consultation(Base):
     __tablename__ = "consultation"
     appointment_id = Column(Integer, primary_key=True, index=True)
@@ -45,9 +48,15 @@ class Consultation(Base):
     doctors = relationship("Doctors", back_populates="consultation")
     users = relationship("UserBase", back_populates="consultation")
 
+    class Config:
+        orm_mode = True
+
 class Admins(Base):
-     __tablename__ = "admins"
-     id = Column(Integer, primary_key=True)
-     email = Column(String, unique=True)
-     password_hashed = Column(String)
+    __tablename__ = "admins"
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True)
+    password_hashed = Column(String)
+
+    class Config:
+        orm_mode = True
 

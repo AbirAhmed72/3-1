@@ -266,6 +266,37 @@ async def make_appointment(data:schemas.ConsultationData, token: str = Depends(o
     }
 
 
+
+@app.get('/appointment/show')
+async def show_my_appointment(
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme)
+):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username=email)
+    except JWTError:
+        raise credentials_exception
+
+    user = services.get_user_by_email(db, email=token_data.username)
+    if user is None:
+        raise credentials_exception
+
+    return services.get_appointment_by_user_id(db, user.id)
+
+
+
+
+
 # @app.post('/appointment/delete')
 # async def delete_appointment(data : schemas.DeleteAppointmentRequest, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
@@ -297,8 +328,8 @@ async def make_appointment(data:schemas.ConsultationData, token: str = Depends(o
 #         detail="Couldn't find the Appointment"
 #     )
 
-@app.delete('/appointment/delete/{appointment_id}')
-async def delete_appointment(appointment_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+@app.delete('/appointment/delete')
+async def delete_appointment(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
     credentials_exception = HTTPException(
         status_code=401,
@@ -319,7 +350,7 @@ async def delete_appointment(appointment_id: int, token: str = Depends(oauth2_sc
     if user is None:
         raise credentials_exception
 
-    appointment = services.get_appointment(db, appointment_id)
+    appointment = services.get_appointment_by_user_id(db, user.id)
     if appointment is None:
         raise HTTPException(
             status_code=404,
@@ -333,7 +364,7 @@ async def delete_appointment(appointment_id: int, token: str = Depends(oauth2_sc
             detail="You do not have permission to delete this appointment"
         )
 
-    status = services.delete_appointment(db, appointment_id)
+    status = services.delete_appointment(db, appointment.appointment_id)
     if status:
         return {
             "status": "Appointment deleted successfully!"
@@ -346,16 +377,44 @@ async def delete_appointment(appointment_id: int, token: str = Depends(oauth2_sc
 
 
 
-@app.post('/doctor/show_patients', response_model = List[schemas.ConsultationResponse])
-# async def show_appointments(id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     appointments = services.get_patients_for_doctor(db, id=id, skip=skip, limit=limit)
-#     return appointments
-async def show_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
 
+
+# @app.post('/doctor/show_patients', response_model = List[schemas.ConsultationResponse])
+# # async def show_appointments(id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+# #     appointments = services.get_patients_for_doctor(db, id=id, skip=skip, limit=limit)
+# #     return appointments
+# async def show_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+
+#     credentials_exception = HTTPException(
+#     status_code=401,
+#     detail="Could not Validate the credentials",
+#     headers={"WWW-Authenticate": "Bearer"}
+#     )
+
+#     try:
+#         payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+#         email: str = payload.get("sub")
+#         if email is None:
+#             raise credentials_exception
+#         token_data = schemas.TokenData(username = email)
+#     except JWTError:
+#         raise credentials_exception
+#     doctor = services.get_doctor_by_email(db, email=token_data.username)
+#     if doctor is None:
+#         raise credentials_exception
+#     return services.get_patients_for_doctor(db, doctor.id)
+
+@app.get('/doctor/show_patients', response_model=List[schemas.ConsultationResponse])
+async def show_appointments(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme)
+):
     credentials_exception = HTTPException(
-    status_code=401,
-    detail="Could not Validate the credentials",
-    headers={"WWW-Authenticate": "Bearer"}
+        status_code=401,
+        detail="Could not validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
     )
 
     try:
@@ -363,13 +422,18 @@ async def show_appointments(skip: int = 0, limit: int = 100, db: Session = Depen
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-        token_data = schemas.TokenData(username = email)
+        token_data = schemas.TokenData(username=email)
     except JWTError:
         raise credentials_exception
+
     doctor = services.get_doctor_by_email(db, email=token_data.username)
     if doctor is None:
         raise credentials_exception
-    return services.get_patients_for_doctor(db, doctor.id)
+
+    return services.get_patients_for_doctor(db, doctor.id, skip=skip, limit=limit)
+
+
+
 
 
 @app.post('/admin/add_doctor')

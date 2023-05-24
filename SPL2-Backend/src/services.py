@@ -143,3 +143,6 @@ def delete_appointment(db: Session, id: int):
 def get_appointment(db: Session, appointment_id: int):
     return db.query(models.Consultation).filter(models.Consultation.appointment_id == appointment_id).first()
 
+def get_appointment_by_user_id(db: Session, user_id: int):
+    return db.query(models.Consultation).filter(models.Consultation.user_id == user_id).first()
+

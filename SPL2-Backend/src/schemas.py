@@ -3,8 +3,6 @@ from typing import Optional, List
 
 from sqlalchemy.sql.sqltypes import Integer, String
 
-class Symptoms(BaseModel):
-    perceived_symptoms: List[str]
 
 class UserData(BaseModel):
     id: int
@@ -22,14 +20,25 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
     
-class UserCreate(UserData):
+class UserCreate(BaseModel):
+    name: str
+    email: str
     password: str
+    class Config:
+        orm_mode = True
+
 
 class ResponseUserData(UserData):
     token: str
     class Config:
         orm_mode = True
 
+class Symptoms(BaseModel):
+    perceived_symptoms: List[str]
+
+    class Config:
+        orm_mode = True
+        
 class ConsultationData(Symptoms):
     required_doctor: str
     predicted_disease: str 
@@ -53,8 +62,20 @@ class DoctorData(BaseModel):
     name: str
     specialization: str
 
-class DoctorWithPassword(DoctorData):
+    class Config:
+        orm_mode = True
+
+class DoctorWithPassword(BaseModel):
+    email: str
+    name: str
+    specialization: str
     password: str
+
+    class Config:
+        orm_mode = True
 
 class DeleteAppointmentRequest(BaseModel):
     id: int
+
+    class Config:
+        orm_mode = True
