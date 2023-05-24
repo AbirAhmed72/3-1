@@ -1,6 +1,6 @@
-# Medicare
+# Online Doctor
 
-Predict the disease based on given input using MultinomialMB
+Make appointment and predict the disease based on given input using MultinomialMB
 
 ## Test run
 1. Setup a Virtual Environment.
