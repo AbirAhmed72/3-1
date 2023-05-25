@@ -27,7 +27,7 @@ class Doctors(Base):
     password_hashed = Column(String)
     name = Column(String)
     specialization = Column(String)
-    # is_active = Column(Boolean)
+    is_approved = Column(Boolean, default=False)
 
     consultation = relationship("Consultation", back_populates="doctors")
 
@@ -42,7 +42,7 @@ class Consultation(Base):
     required_doctor = Column(String)
     symptoms = Column(String)
     predicted_disease = Column(String)
-    doctor_id = Column(Integer, ForeignKey("doctors.id"))
+    doctor_id = Column(Integer, ForeignKey("doctors.id", onupdate="CASCADE"))
     status = Column(Boolean)
 
     doctors = relationship("Doctors", back_populates="consultation")

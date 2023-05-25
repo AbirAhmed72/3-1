@@ -41,7 +41,8 @@ class Symptoms(BaseModel):
         
 class ConsultationData(Symptoms):
     required_doctor: str
-    predicted_disease: str 
+    predicted_disease: str
+    
 
 class ConsultationResponse(BaseModel):
     appointment_id :int
@@ -61,9 +62,11 @@ class DoctorData(BaseModel):
     email: str
     name: str
     specialization: str
+    approval: bool
 
     class Config:
         orm_mode = True
+
 
 class DoctorWithPassword(BaseModel):
     email: str
@@ -76,6 +79,21 @@ class DoctorWithPassword(BaseModel):
 
 class DeleteAppointmentRequest(BaseModel):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class AdminData(BaseModel):
+    id: int
+    email: str
+
+    class Config:
+        orm_mode = True
+
+class AdminWithPassword(BaseModel):
+    email: str
+    password: str
 
     class Config:
         orm_mode = True

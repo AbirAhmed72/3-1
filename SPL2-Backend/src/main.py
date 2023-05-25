@@ -176,9 +176,27 @@ async def check_disease( symptoms: Symptoms):
     )
     return result
 
+@app.get("/approved_doctors", response_model=List[schemas.DoctorData])
+async def approved_doctors(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    # Retrieve the list of approved doctors from the database
+    approved_doctors = services.get_approved_doctors(db, skip=skip, limit=limit)
 
-@app.post('/signup')
-async def create_user(user_data: schemas.UserCreate,  db: Session = Depends(get_db)):
+    # Return the list of approved doctors in the response
+    return approved_doctors
+
+@app.get("/specialized_doctors/{doctor_specialization}", response_model=List[schemas.DoctorData])
+async def specialized_doctors(doctor_specialization:str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    # Retrieve the list of specialized doctors from the database
+    specialized_doctors = services.get_specialized_doctors_list(db, doctor_specialization, skip=skip, limit=limit)
+
+    if not specialized_doctors:
+        raise HTTPException(status_code=404, detail="No doctors found for the given specialization")
+
+    # Return the list of specialized doctors in the response
+    return specialized_doctors
+
+@app.post('/patient_signup')
+async def patient_signup(user_data: schemas.UserCreate,  db: Session = Depends(get_db)):
     db_user = services.get_user_by_email(db, user_data.email)
     if db_user:
          raise HTTPException(status_code=400, detail="E-mail already Registered")
@@ -190,6 +208,36 @@ async def create_user(user_data: schemas.UserCreate,  db: Session = Depends(get_
     data.token = access_token
     return data
 
+@app.post('/doctor_signup')
+async def doctor_signup(doctor_data: schemas.DoctorWithPassword, db: Session = Depends(get_db)):
+    db_user = services.get_doctor_by_email(db, doctor_data.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    response = services.add_doctor(db, doctor_data)
+    delattr(response, "password_hashed")
+    return {
+        "status": "Doctor signup successful. Waiting for admin approval.",
+        "info": response
+    }
+
+# @app.post("/admin_signup", response_model=schemas.AdminData)
+# async def admin_signup(admin_data: schemas.AdminWithPassword, db: Session = Depends(get_db)):
+#     # Check if the admin email is already registered
+#     if services.get_admin_by_email(db, admin_data.email):
+#         raise HTTPException(status_code=400, detail="Email already registered")
+
+#     # Create a new admin user
+#     hashed_password = services.create_hashed_password(admin_data.password)
+#     admin = models.Admins(
+#         email=admin_data.email,
+#         password_hashed=hashed_password
+#     )
+#     db.add(admin)
+#     db.commit()
+#     db.refresh(admin)
+
+#     # Return the created admin user data
+#     return admin
 
 
 @app.get('/me')
@@ -433,48 +481,44 @@ async def show_appointments(
     return services.get_patients_for_doctor(db, doctor.id, skip=skip, limit=limit)
 
 
+@app.put("/admin/approve_doctor/{doctor_email}")
+async def approve_doctor(doctor_email: str, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    # Check if the current user is an admin
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username=email)
+    except JWTError:
+        raise credentials_exception
 
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
+        raise credentials_exception
 
+    # Get the doctor from the database
+    doctor = services.get_doctor_by_email(db, doctor_email)
 
-@app.post('/admin/add_doctor')
-# async def add_doctor(doctor_data: schemas.DoctorWithPassword, token: str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
+    # Check if the doctor exists
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+    
+    if doctor.is_approved == True:
+        raise HTTPException(status_code=400, detail="Doctor is already approved")
 
-#     credentials_exception = HTTPException(
-#     status_code=401,
-#     detail="Could not Validate the credentials",
-#     headers={"WWW-Authenticate": "Bearer"}
-#     )
-#     try:
-#         payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-#         email: str = payload.get("sub")
-#         if email is None:
-#             raise credentials_exception
-#         token_data = schemas.TokenData(username = email)
-#     except JWTError:
-#         raise credentials_exception
-#     user = services.get_admin_by_email(db, email=token_data.username)
-#     if user is None:
-#         raise credentials_exception
-#     db_user = services.get_doctor_by_email(db, doctor_data.email)
-#     if db_user:
-#         raise HTTPException(status_code=400, detail="E-mail already Registered")
-#     response = services.add_doctor(db, doctor_data)
-#     delattr(response, "password_hashed")
-#     return{
-#         "status": "Doctor added successfully!",
-#         "info" : response
-#     }
+    # Update the doctor's approval status
+    doctor.is_approved = True
+    db.commit()
 
-async def add_doctor(doctor_data: schemas.DoctorWithPassword, db: Session = Depends(get_db)):
-    db_user = services.get_doctor_by_email(db, doctor_data.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="E-mail already registered")
-    response = services.add_doctor(db, doctor_data)
-    delattr(response, "password_hashed")
-    return {
-        "status": "Doctor added successfully!",
-        "info" : response
-    }
+    # Return the updated doctor data
+    return {"message": "Doctor approved successfully"}
+
 
 
 

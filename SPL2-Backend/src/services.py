@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.sqltypes import Integer
 import models, schemas
@@ -55,6 +55,20 @@ def get_doctor_by_specialization(db: Session, required_doctor: str):
     index = random.randint(1,length)  # selecting random
     return doc[index-1]
 
+def get_specialized_doctors_list(db: Session, doctor_specialization: str, skip: int = 0, limit: int = 10) -> List[schemas.DoctorData]:
+    doctors = db.query(models.Doctors).filter(models.Doctors.specialization == doctor_specialization).offset(skip).limit(limit).all()
+    specialized_doctors = []
+    for doctor in doctors:
+        specialized_doctors.append(
+            schemas.DoctorData(
+                id=doctor.id,
+                email=doctor.email,
+                name=doctor.name,
+                specialization=doctor.specialization,
+                approval=doctor.is_approved
+            )
+        )
+    return specialized_doctors
 
 
 def get_doctor_by_email(db: Session, email: str):
@@ -123,15 +137,16 @@ def get_admin_by_email(db:Session, email :str):
 def add_doctor(db: Session, data: schemas.DoctorWithPassword):
     hashed_password = create_hashed_password(data.password)
     doctor_data = models.Doctors(
-        name = data.name,
-        email = data.email,
-        password_hashed = hashed_password,
-        specialization = data.specialization
+        name=data.name,
+        email=data.email,
+        password_hashed=hashed_password,
+        specialization=data.specialization,
+        is_approved=False
     )
     db.add(doctor_data)
     db.commit()
-    db.refresh(doctor_data)
-    return db.query(models.Doctors).filter(models.Doctors.email == data.email).first()
+    return doctor_data
+
 
 def delete_appointment(db: Session, id: int):
     deleted = db.query(models.Consultation).filter(models.Consultation.appointment_id == id).delete()
@@ -145,4 +160,22 @@ def get_appointment(db: Session, appointment_id: int):
 
 def get_appointment_by_user_id(db: Session, user_id: int):
     return db.query(models.Consultation).filter(models.Consultation.user_id == user_id).first()
+
+
+def get_approved_doctors(db: Session, skip: int = 0, limit: int = 10) -> List[schemas.DoctorData]:
+    doctors = db.query(models.Doctors).filter(models.Doctors.is_approved == True).offset(skip).limit(limit).all()
+    approved_doctors = []
+    for doctor in doctors:
+        approved_doctors.append(
+            schemas.DoctorData(
+                id=doctor.id,
+                email=doctor.email,
+                name=doctor.name,
+                specialization=doctor.specialization,
+                approval=doctor.is_approved
+            )
+        )
+    return approved_doctors
+
+
 
