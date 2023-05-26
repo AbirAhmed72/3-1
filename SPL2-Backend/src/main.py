@@ -1,3 +1,4 @@
+import random
 import joblib as jb
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -12,7 +13,7 @@ from sqlalchemy.orm import Session
 import models, schemas, services
 from database import SessionLocal, engine
 
-from datetime import timedelta, time
+from datetime import datetime, timedelta, time
 from jose import JWTError,jwt
 
 
@@ -283,12 +284,42 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db:Session = Dep
         "role":"user"
     }
 
+# @app.post('/appointment/add')
+# async def make_appointment(data:schemas.ConsultationData, token: str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
+#     credentials_exception = HTTPException(
+#     status_code=401,
+#     detail="Could not Validate the credentials",
+#     headers={"WWW-Authenticate": "Bearer"}
+#     )
+
+#     try:
+#         payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+#         email: str = payload.get("sub")
+#         if email is None:
+#             raise credentials_exception
+#         token_data = schemas.TokenData(username = email)
+#     except JWTError:
+#         raise credentials_exception
+#     user = services.get_user_by_email(db, email=token_data.username)
+#     if user is None:
+#         raise credentials_exception
+
+#     if services.has_appointment(db, user.id):
+#         raise HTTPException(status_code=400, detail="User already has an Appointment")
+#     if services.get_doctor_by_specialization(db, data.required_doctor) is None:
+#         raise HTTPException(status_code=500, detail="NO_DOCTOR_AVAILABLE")
+#     appointment = services.make_appointment(db, user.id, data)
+#     return {
+#         "appointment" : appointment,
+#         "doctor" : services.get_doctor_by_id(db, appointment.doctor_id).name
+#     }
+
 @app.post('/appointment/add')
-async def make_appointment(data:schemas.ConsultationData, token: str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
+async def make_appointment(data: schemas.ConsultationData, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
-    status_code=401,
-    detail="Could not Validate the credentials",
-    headers={"WWW-Authenticate": "Bearer"}
+        status_code=401,
+        detail="Could not validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
     )
 
     try:
@@ -296,21 +327,36 @@ async def make_appointment(data:schemas.ConsultationData, token: str = Depends(o
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-        token_data = schemas.TokenData(username = email)
+        token_data = schemas.TokenData(username=email)
     except JWTError:
         raise credentials_exception
+    
+    if data.appointment_datetime is None:
+        raise HTTPException(status_code=400, detail="Appointment datetime is required.")
+    
+    if data.required_doctor is None:
+        raise HTTPException(status_code=400, detail="Required doctor specialization is required.")
+
     user = services.get_user_by_email(db, email=token_data.username)
     if user is None:
         raise credentials_exception
 
     if services.has_appointment(db, user.id):
-        raise HTTPException(status_code=400, detail="User already has an Appointment")
-    if services.get_doctor_by_specialization(db, data.required_doctor) is None:
-        raise HTTPException(status_code=500, detail="NO_DOCTOR_AVAILABLE")
-    appointment = services.make_appointment(db, user.id, data)
+        raise HTTPException(status_code=400, detail="User already has an appointment")
+
+    doctors = services.get_specialized_doctors_list(db, data.required_doctor)
+    approved_doctors = [doctor for doctor in doctors if doctor.approval]
+    
+    if not approved_doctors:
+        raise HTTPException(status_code=500, detail="No approved doctors available")
+
+    doctor = random.choice(approved_doctors)
+    doctor_id = doctor.id
+
+    appointment = services.make_appointment(db, user.id, doctor_id, data)
     return {
-        "appointment" : appointment,
-        "doctor" : services.get_doctor_by_id(db, appointment.doctor_id).name
+        "appointment": appointment,
+        "doctor": services.get_doctor_by_id(db, appointment.doctor_id).name
     }
 
 
@@ -339,7 +385,11 @@ async def show_my_appointment(
     if user is None:
         raise credentials_exception
 
-    return services.get_appointment_by_user_id(db, user.id)
+    appointment = services.get_appointment_by_user_id(db, user.id)
+    if appointment is None:
+        return {"message" : "You got no appointments"}
+    
+    return appointment
 
 
 
@@ -478,7 +528,48 @@ async def show_appointments(
     if doctor is None:
         raise credentials_exception
 
-    return services.get_patients_for_doctor(db, doctor.id, skip=skip, limit=limit)
+    patients = services.get_patients_for_doctor(db, doctor.id, skip=skip, limit=limit)
+    patients_who_made_appointment = [patient for patient in patients if patient is not None]
+
+    return patients_who_made_appointment
+
+
+@app.put('/doctor/{appointment_id}/status')
+async def change_appointment_status(appointment_id: int, status: bool, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username=email)
+    except JWTError:
+        raise credentials_exception
+
+    doctor = services.get_doctor_by_email(db, email=token_data.username)
+    if doctor is None:
+        raise credentials_exception
+
+    appointment = services.get_appointment(db, appointment_id)
+    if appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    if appointment.doctor_id != doctor.id:
+        raise HTTPException(status_code=403, detail="You are not authorized to change the status of this appointment")
+
+    appointment.status = status
+    db.commit()
+    db.refresh(appointment)
+
+    return {"message": f"Appointment status updated to {status} successfully",
+            "appointment": appointment}
+
+
 
 
 @app.put("/admin/approve_doctor/{doctor_email}")

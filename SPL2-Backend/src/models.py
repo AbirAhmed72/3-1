@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey, PrimaryKeyConstraint
 from database import Base
 
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 
 class UserBase(Base):
     __tablename__ = "users"
@@ -44,6 +44,7 @@ class Consultation(Base):
     predicted_disease = Column(String)
     doctor_id = Column(Integer, ForeignKey("doctors.id", onupdate="CASCADE"))
     status = Column(Boolean)
+    appointment_datetime = Column(DateTime)
 
     doctors = relationship("Doctors", back_populates="consultation")
     users = relationship("UserBase", back_populates="consultation")

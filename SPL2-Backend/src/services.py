@@ -107,16 +107,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def make_appointment(db:Session, current_user_id:int, data: schemas.ConsultationData):
+def make_appointment(db:Session, current_user_id:int, doctor_id: int, data: schemas.ConsultationData):
 
     appointment = models.Consultation(
         user_id = current_user_id,
         patient_name = get_user_by_id(db, current_user_id).name,
-        doctor_id = get_doctor_by_specialization(db, data.required_doctor).id,
+        doctor_id = doctor_id,
         required_doctor = data.required_doctor,
         symptoms = str(data.perceived_symptoms),
         predicted_disease = data.predicted_disease,
-        status = False
+        status = False,
+        appointment_datetime=data.appointment_datetime
     )
     db.add(appointment)
     db.commit()

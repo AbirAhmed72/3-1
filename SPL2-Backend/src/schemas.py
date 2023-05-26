@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional, List
 
@@ -42,6 +43,7 @@ class Symptoms(BaseModel):
 class ConsultationData(Symptoms):
     required_doctor: str
     predicted_disease: str
+    appointment_datetime: datetime
     
 
 class ConsultationResponse(BaseModel):
@@ -53,6 +55,7 @@ class ConsultationResponse(BaseModel):
     predicted_disease: str
     doctor_id: int
     status: bool
+    appointment_datetime: datetime
 
     class Config:
         orm_mode = True
