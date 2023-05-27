@@ -36,13 +36,15 @@ def get_db():
         yield db
     finally:
         db.close()
-        
-def verify_user(token: str):
-    credentials_exception = HTTPException(
+
+credentials_exception = HTTPException(
         status_code=401,
         detail="Could not Validate the credentials",
         headers={"WWW-Authenticate": "Bearer"}
     )
+        
+def verify_user(token: str):
+    
 
     try:
         payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
@@ -50,6 +52,7 @@ def verify_user(token: str):
         if email is None:
             raise credentials_exception
         token_data = schemas.TokenData(username = email)
+        return token_data
     except JWTError:
         raise credentials_exception
 
@@ -256,21 +259,9 @@ async def doctor_signup(doctor_data: schemas.DoctorWithPassword, db: Session = D
 
 
 @app.get('/me')
-async def get_current_user(token: str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not Validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
+async def get_current_user_info(token: str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
 
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username = email)
-    except JWTError:
-        raise credentials_exception
+    token_data = verify_user(token)
 
     if services.is_doctor(db, token_data.username):
         user = services.get_doctor_by_email(db, token_data.username)
@@ -286,7 +277,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db:Session = Dep
             "role" : "admin"
         }
 
-
     user = services.get_user_by_email(db, token_data.username)
     appointment = services.has_appointment(db, user.id)
     delattr(user, "password_hashed")
@@ -298,52 +288,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db:Session = Dep
         "role":"user"
     }
 
-# @app.post('/appointment/add')
-# async def make_appointment(data:schemas.ConsultationData, token: str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
-#     credentials_exception = HTTPException(
-#     status_code=401,
-#     detail="Could not Validate the credentials",
-#     headers={"WWW-Authenticate": "Bearer"}
-#     )
-
-#     try:
-#         payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-#         email: str = payload.get("sub")
-#         if email is None:
-#             raise credentials_exception
-#         token_data = schemas.TokenData(username = email)
-#     except JWTError:
-#         raise credentials_exception
-#     user = services.get_user_by_email(db, email=token_data.username)
-#     if user is None:
-#         raise credentials_exception
-
-#     if services.has_appointment(db, user.id):
-#         raise HTTPException(status_code=400, detail="User already has an Appointment")
-#     if services.get_doctor_by_specialization(db, data.required_doctor) is None:
-#         raise HTTPException(status_code=500, detail="NO_DOCTOR_AVAILABLE")
-#     appointment = services.make_appointment(db, user.id, data)
-#     return {
-#         "appointment" : appointment,
-#         "doctor" : services.get_doctor_by_id(db, appointment.doctor_id).name
-#     }
-
-@app.post('/appointment/add')
+@app.post('/patient/appointment/add', tags=["Patient"])
 async def make_appointment(data: schemas.ConsultationData, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=email)
-    except JWTError:
-        raise credentials_exception
+    
+    token_data = verify_user(token)
     
     if data.appointment_datetime is None:
         raise HTTPException(status_code=400, detail="Appointment datetime is required.")
@@ -373,27 +321,10 @@ async def make_appointment(data: schemas.ConsultationData, token: str = Depends(
         "doctor": services.get_doctor_by_id(db, appointment.doctor_id).name
     }
 
-
-
-@app.get('/appointment/show')
-async def show_my_appointment(
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
-):
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=email)
-    except JWTError:
-        raise credentials_exception
+@app.get('/patient/appointment/show', tags=["Patient"])
+async def show_my_appointment(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    
+    token_data = verify_user(token)
 
     user = services.get_user_by_email(db, email=token_data.username)
     if user is None:
@@ -406,57 +337,10 @@ async def show_my_appointment(
     return appointment
 
 
-
-
-
-# @app.post('/appointment/delete')
-# async def delete_appointment(data : schemas.DeleteAppointmentRequest, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-
-#     credentials_exception = HTTPException(
-#     status_code=401,
-#     detail="Could not Validate the credentials",
-#     headers={"WWW-Authenticate": "Bearer"}
-#     )
-
-#     try:
-#         payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-#         email: str = payload.get("sub")
-#         if email is None:
-#             raise credentials_exception
-#         token_data = schemas.TokenData(username = email)
-#     except JWTError:
-#         raise credentials_exception
-#     user = services.get_user_by_email(db, email=token_data.username)
-#     if user is None:
-#         raise credentials_exception
-    
-#     status = services.delete_appointment(db, int(data.id))
-#     if status:
-#         return {
-#             "status": "Appointment deleted Successfully!"
-#         }
-#     raise HTTPException(
-#         status_code=500,
-#         detail="Couldn't find the Appointment"
-#     )
-
-@app.delete('/appointment/delete')
+@app.delete('/patient/appointment/delete', tags=["Patient"])
 async def delete_appointment(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=email)
-    except JWTError:
-        raise credentials_exception
+    token_data = verify_user(token)
 
     user = services.get_user_by_email(db, email=token_data.username)
     if user is None:
@@ -488,55 +372,10 @@ async def delete_appointment(token: str = Depends(oauth2_scheme), db: Session = 
     )
 
 
-
-
-
-# @app.post('/doctor/show_patients', response_model = List[schemas.ConsultationResponse])
-# # async def show_appointments(id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-# #     appointments = services.get_patients_for_doctor(db, id=id, skip=skip, limit=limit)
-# #     return appointments
-# async def show_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
-
-#     credentials_exception = HTTPException(
-#     status_code=401,
-#     detail="Could not Validate the credentials",
-#     headers={"WWW-Authenticate": "Bearer"}
-#     )
-
-#     try:
-#         payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-#         email: str = payload.get("sub")
-#         if email is None:
-#             raise credentials_exception
-#         token_data = schemas.TokenData(username = email)
-#     except JWTError:
-#         raise credentials_exception
-#     doctor = services.get_doctor_by_email(db, email=token_data.username)
-#     if doctor is None:
-#         raise credentials_exception
-#     return services.get_patients_for_doctor(db, doctor.id)
-
-@app.get('/doctor/show_patients', response_model=List[schemas.ConsultationResponse])
-async def show_appointments(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
-):
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=email)
-    except JWTError:
-        raise credentials_exception
+@app.get('/doctor/show_patients', response_model=List[schemas.ConsultationResponse], tags=["Doctor"])
+async def show_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    
+    token_data = verify_user(token)
 
     doctor = services.get_doctor_by_email(db, email=token_data.username)
     if doctor is None:
@@ -548,22 +387,10 @@ async def show_appointments(
     return patients_who_made_appointment
 
 
-@app.put('/doctor/{appointment_id}/status')
+@app.put('/doctor/{appointment_id}/status', tags=["Doctor"])
 async def change_appointment_status(appointment_id: int, status: bool, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=email)
-    except JWTError:
-        raise credentials_exception
+    
+    token_data = verify_user(token)
 
     doctor = services.get_doctor_by_email(db, email=token_data.username)
     if doctor is None:
@@ -584,24 +411,10 @@ async def change_appointment_status(appointment_id: int, status: bool, token: st
             "appointment": appointment}
 
 
-
-
-@app.put("/admin/approve_doctor/{doctor_email}")
+@app.put("/admin/approve_doctor/{doctor_email}", tags=["Admin"])
 async def approve_doctor(doctor_email: str, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    # Check if the current user is an admin
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=email)
-    except JWTError:
-        raise credentials_exception
+
+    token_data = verify_user(token)
 
     admin = services.get_admin_by_email(db, token_data.username)
     if not admin:
@@ -624,55 +437,100 @@ async def approve_doctor(doctor_email: str, token: str = Depends(oauth2_scheme),
     # Return the updated doctor data
     return {"message": "Doctor approved successfully"}
 
+@app.get('/admin/patients', tags=["Admin"])
+def get_all_patients(skip: int = 0, limit: int = 100, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
-# Endpoint for submitting a complaint
-@app.post('/user/complaints')
-def submit_complaint(complaint: schemas.ComplaintCreate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    # Create a new complaint entry in the database
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not Validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
+    token_data = verify_user(token)
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
+        raise credentials_exception
+    
+    patients = db.query(models.UserBase).offset(skip).limit(limit).all()
+    return {"patients": patients}
 
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username = email)
-    except JWTError:
+@app.delete('/admin/patients/{patient_id}', tags=["Admin"])
+def delete_patient(patient_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    token_data = verify_user(token)
+
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
         raise credentials_exception
     
 
-    new_complaint = models.Complaints(
-        user_email=token_data.username,
-        complaint_text=complaint.complaint_text,
-        feedback_text=None  # Initialize feedback as None
-    )
-    db.add(new_complaint)
+    patient = db.query(models.UserBase).filter(models.UserBase.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    db.delete(patient)
     db.commit()
-    db.refresh(new_complaint)
-    return {"message": "Complaint submitted successfully", "complaint_id": new_complaint.id}
+
+    return {"message": f"Patient {patient.id} deleted successfully"}
+
+@app.get('/admin/doctors', tags=["Admin"])
+def get_all_doctors(skip: int = 0, limit: int = 100, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    token_data = verify_user(token)
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
+        raise credentials_exception
+    
+    doctors = db.query(models.Doctors).offset(skip).limit(limit).all()
+    return {"doctors": doctors}
+
+@app.delete('/admin/doctors/{doctor_id}', tags=["Admin"])
+def delete_doctor(doctor_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    token_data = verify_user(token)
+
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
+        raise credentials_exception
+    
+    doctor = db.query(models.Doctors).filter(models.Doctors.id == doctor_id).first()
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+
+    db.delete(doctor)
+    db.commit()
+
+    return {f"message": "Doctor {doctor.id} deleted successfully"}
+
+@app.get('/admin/complaints', tags=["Admin"])
+def get_all_complaints(skip: int = 0, limit: int = 100, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    token_data = verify_user(token)
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
+        raise credentials_exception
+    
+    complaints = db.query(models.Complaints).offset(skip).limit(limit).all()
+    return {"complaints": complaints}
+
+@app.delete('/admin/complaints/{complaint_id}', tags=["Admin"])
+def delete_complaint(complaint_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    token_data = verify_user(token)
+
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
+        raise credentials_exception
+    
+    complaint = db.query(models.Complaints).filter(models.Complaints.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    db.delete(complaint)
+    db.commit()
+
+    return {"message": f"Complaint {complaint.id} deleted successfully"}
 
 
 # Endpoint for admin to provide feedback on a complaint
-@app.put('/admin/complaints/{complaint_id}/feedback')
+@app.put('/admin/complaints/{complaint_id}/feedback', tags=["Admin"])
 def provide_feedback(complaint_id: int, feedback: schemas.Feedback, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username=email)
-    except JWTError:
-        raise credentials_exception
+    token_data = verify_user(token)
 
     admin = services.get_admin_by_email(db, token_data.username)
     if not admin:
@@ -690,67 +548,75 @@ def provide_feedback(complaint_id: int, feedback: schemas.Feedback, token: str =
     return {"message": "Feedback provided successfully"}
 
 
-# Endpoint for user to update their own complaint
-@app.put('/user/complaints/{complaint_id}')
-def update_complaint(complaint_id: int, complaint_update: schemas.ComplaintUpdate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not Validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username = email)
-    except JWTError:
-        raise credentials_exception
+# Endpoint for submitting a complaint
+@app.post('/user/complaints', tags=["Users"])
+def submit_complaint(complaint: schemas.ComplaintBase, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    # Create a new complaint entry in the database
     
-    # Retrieve the complaint by ID
-    complaint = db.query(models.Complaints).filter(models.Complaints.id == complaint_id).first()
+    token_data = verify_user(token)
+    
+    # Check if the user already has a complaint
+    existing_complaint = db.query(models.Complaints).filter(models.Complaints.user_email == token_data.username).first()
+    if existing_complaint:
+        raise HTTPException(status_code=400, detail=f"You already have a complaint of id {existing_complaint.id}")
+    
+    new_complaint = models.Complaints(
+        user_email=token_data.username,
+        complaint_text=complaint.complaint_text,
+        feedback_text=None  # Initialize feedback as None
+    )
+    db.add(new_complaint)
+    db.commit()
+    db.refresh(new_complaint)
+    return {"message": "Complaint submitted successfully", "complaint_id": new_complaint.id}
+
+
+
+# Endpoint to retrieve a specific complaint by the user
+@app.get('/user/complaints', tags=["Users"])
+def get_complaint(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    token_data = verify_user(token)
+
+    # Retrieve the complaint by user email
+    complaint = db.query(models.Complaints).filter(models.Complaints.user_email == token_data.username).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    return {"complaint": complaint}
+
+@app.put('/user/complaints', tags=["Users"])
+def update_complaint(complaint_update: schemas.ComplaintUpdate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    token_data = verify_user(token)
+
+    # Retrieve the complaint by user email
+    complaint = db.query(models.Complaints).filter(models.Complaints.user_email == token_data.username).first()
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint not found")
     
-    # Check if the user email matches the complaint's user_email
-    if complaint.user_email != token_data.username:
-        raise HTTPException(status_code=403, detail="You are not authorized to update this complaint")
-    
+    if complaint.feedback_text:
+        raise HTTPException(status_code=400, detail=f"You already have a feedback for this complaint which is: {complaint.feedback_text}")
+
     # Update the complaint text
     complaint.complaint_text = complaint_update.complaint_text
     db.commit()
 
     return {"message": "Complaint updated successfully"}
 
+# Endpoint for user to delete their own complaint
+@app.delete('/user/complaints', tags=["Users"])
+def delete_complaint(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
-# Endpoint to retrieve a specific complaint by its ID
-@app.get('/user/complaints/{complaint_id}')
-def get_complaint(complaint_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    token_data = verify_user(token)
 
-    credentials_exception = HTTPException(
-        status_code=401,
-        detail="Could not Validate the credentials",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-    try:
-        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(username = email)
-    except JWTError:
-        raise credentials_exception
-    
-
-    # Retrieve the complaint by ID
-    complaint = db.query(models.Complaints).filter(models.Complaints.id == complaint_id).first()
+    # Retrieve the complaint by user email
+    complaint = db.query(models.Complaints).filter(models.Complaints.user_email == token_data.username).first()
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint not found")
 
-    # Check if the user email matches the complaint's user_email
-    if complaint.user_email != token_data.username:
-        raise HTTPException(status_code=403, detail="You are not authorized to access this complaint")
-    
-    return {"complaint": complaint}
+    # Delete the complaint
+    db.delete(complaint)
+    db.commit()
+
+    return {"message": "Complaint deleted successfully"}

@@ -109,12 +109,6 @@ class ComplaintBase(BaseModel):
     class Config:
         orm_mode = True
 
-class ComplaintCreate(ComplaintBase):
-    user_email: str
-
-    class Config:
-        orm_mode = True
-
 class ComplaintUpdate(BaseModel):
     complaint_text: str
     class Config:

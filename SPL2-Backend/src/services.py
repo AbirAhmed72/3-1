@@ -37,11 +37,8 @@ def is_doctor(db: Session, email: str):
     return True
 
 
-
 def has_appointment(db: Session, id: int):
     return db.query(models.Consultation).filter(models.Consultation.user_id == id).first()
-
-
 
 
 def get_doctor_by_specialization(db: Session, required_doctor: str):
@@ -56,7 +53,7 @@ def get_doctor_by_specialization(db: Session, required_doctor: str):
     return doc[index-1]
 
 def get_specialized_doctors_list(db: Session, doctor_specialization: str, skip: int = 0, limit: int = 10) -> List[schemas.DoctorData]:
-    doctors = db.query(models.Doctors).filter(models.Doctors.specialization == doctor_specialization).offset(skip).limit(limit).all()
+    doctors = db.query(models.Doctors).filter(models.Doctors.specialization == doctor_specialization, models.Doctors.is_approved == True).offset(skip).limit(limit).all()
     specialized_doctors = []
     for doctor in doctors:
         specialized_doctors.append(
