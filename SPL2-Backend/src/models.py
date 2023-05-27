@@ -10,11 +10,9 @@ class UserBase(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    # username = Column(String, unique=True)
     name = Column(String)
     email = Column(String, unique=True)
     password_hashed = Column(String)
-    # is_active = Column(Boolean)
     consultation = relationship("Consultation", back_populates="users")
     
     class Config:
@@ -60,4 +58,17 @@ class Admins(Base):
 
     class Config:
         orm_mode = True
+
+
+class Complaints(Base):
+    __tablename__ = 'complaints'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_email = Column(String, index=True)  # Email of the user who made the complaint
+    complaint_text = Column(String, nullable=False)
+    feedback_text = Column(String)
+
+    class Config:
+        orm_mode = True
+
 

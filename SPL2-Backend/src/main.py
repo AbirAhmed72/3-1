@@ -37,7 +37,21 @@ def get_db():
     finally:
         db.close()
         
-        
+def verify_user(token: str):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not Validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username = email)
+    except JWTError:
+        raise credentials_exception
 
 model = jb.load('../trained_model')
 
@@ -611,20 +625,132 @@ async def approve_doctor(doctor_email: str, token: str = Depends(oauth2_scheme),
     return {"message": "Doctor approved successfully"}
 
 
+# Endpoint for submitting a complaint
+@app.post('/user/complaints')
+def submit_complaint(complaint: schemas.ComplaintCreate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    # Create a new complaint entry in the database
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not Validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
-
-
-
-
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username = email)
+    except JWTError:
+        raise credentials_exception
     
 
+    new_complaint = models.Complaints(
+        user_email=token_data.username,
+        complaint_text=complaint.complaint_text,
+        feedback_text=None  # Initialize feedback as None
+    )
+    db.add(new_complaint)
+    db.commit()
+    db.refresh(new_complaint)
+    return {"message": "Complaint submitted successfully", "complaint_id": new_complaint.id}
+
+
+# Endpoint for admin to provide feedback on a complaint
+@app.put('/admin/complaints/{complaint_id}/feedback')
+def provide_feedback(complaint_id: int, feedback: schemas.Feedback, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username=email)
+    except JWTError:
+        raise credentials_exception
+
+    admin = services.get_admin_by_email(db, token_data.username)
+    if not admin:
+        raise credentials_exception
     
+    # Retrieve the complaint by ID
+    complaint = db.query(models.Complaints).filter(models.Complaints.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    # Update the complaint with the provided feedback
+    complaint.feedback_text = feedback.feedback_text
+    db.commit()
+
+    return {"message": "Feedback provided successfully"}
+
+
+# Endpoint for user to update their own complaint
+@app.put('/user/complaints/{complaint_id}')
+def update_complaint(complaint_id: int, complaint_update: schemas.ComplaintUpdate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not Validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username = email)
+    except JWTError:
+        raise credentials_exception
+    
+    # Retrieve the complaint by ID
+    complaint = db.query(models.Complaints).filter(models.Complaints.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+    
+    # Check if the user email matches the complaint's user_email
+    if complaint.user_email != token_data.username:
+        raise HTTPException(status_code=403, detail="You are not authorized to update this complaint")
+    
+    # Update the complaint text
+    complaint.complaint_text = complaint_update.complaint_text
+    db.commit()
+
+    return {"message": "Complaint updated successfully"}
+
+
+# Endpoint to retrieve a specific complaint by its ID
+@app.get('/user/complaints/{complaint_id}')
+def get_complaint(complaint_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not Validate the credentials",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
+    try:
+        payload = jwt.decode(token, services.SECRET_KEY, algorithms=[services.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(username = email)
+    except JWTError:
+        raise credentials_exception
     
 
+    # Retrieve the complaint by ID
+    complaint = db.query(models.Complaints).filter(models.Complaints.id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    # Check if the user email matches the complaint's user_email
+    if complaint.user_email != token_data.username:
+        raise HTTPException(status_code=403, detail="You are not authorized to access this complaint")
     
-
-
-
-        
-
-
+    return {"complaint": complaint}

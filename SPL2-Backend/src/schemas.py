@@ -100,3 +100,37 @@ class AdminWithPassword(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+
+class ComplaintBase(BaseModel):
+    complaint_text: str
+    
+    class Config:
+        orm_mode = True
+
+class ComplaintCreate(ComplaintBase):
+    user_email: str
+
+    class Config:
+        orm_mode = True
+
+class ComplaintUpdate(BaseModel):
+    complaint_text: str
+    class Config:
+        orm_mode = True
+
+class Complaint(ComplaintBase):
+    id: int
+    user_email: str
+    feedback_text: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class Feedback(BaseModel):
+    feedback_text: str
+
+    class Config:
+        orm_mode = True
