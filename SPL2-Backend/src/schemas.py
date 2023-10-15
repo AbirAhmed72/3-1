@@ -43,7 +43,7 @@ class Symptoms(BaseModel):
 class ConsultationData(Symptoms):
     required_doctor: str
     predicted_disease: str
-    appointment_datetime: datetime
+    # appointment_datetime: datetime
     
 
 class ConsultationResponse(BaseModel):
