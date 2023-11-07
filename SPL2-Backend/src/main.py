@@ -187,7 +187,7 @@ async def check_disease( symptoms: Symptoms):
     else :
         specialist = "Other"
 
-    result = schemas.ConsultationData(
+    result = schemas.PredictionData(
         perceived_symptoms = symptoms.perceived_symptoms,
         predicted_disease = disease,
         required_doctor = specialist
